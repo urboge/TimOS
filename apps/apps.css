@@ -1,15 +1,38 @@
 #photos-window .window-content {
-  gap: 10px;
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+  overflow-y: scroll;
 }
-#photos-window .window-content img {
-  min-width: 200px;
-  width: 10%;
-  max-width: 400px;
-  aspect-ratio: 5/3;
+#photos-window .window-content::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.4);
   border-radius: 10px;
+}
+#photos-window .window-content::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+}
+#photos-window .window-content::-webkit-scrollbar {
+  width: 5px;               /* scrollbar width */
+}
+#photos-window .window-content div {
+  gap: 0px;
+  width: 90%;
+  min-width: 422px;
+}
+#photos-window .window-content div img {
+  min-width: 100px;
+  width: 9%;
+  max-width: 400px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border: solid 1px white;
+  outline: solid 1px rgb(255, 255, 255);
+  margin: 0;
+  transition: 0.15s;
+  border-radius: 0px;
+}
+#photos-window .window-content div img:hover {
+  transform: scale(1.05);
 }
 
 #files-window .window-content {
