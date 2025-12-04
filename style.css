@@ -63,6 +63,11 @@ input:focus {
   object-position: center;
   transition: 0.5s;
   z-index: 0;
+  user-select: none; /* Standard */
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  pointer-events: none
 }
 
 #menu-bar {
@@ -231,6 +236,11 @@ body.dark-mode #dock {
   background-color: rgb(255, 255, 255);
   background-size: cover;
   cursor: default;
+  user-select: none; /* Standard */
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+
 }
 
 #dock .app-icon:hover {
@@ -305,7 +315,5 @@ body.dark-mode #calendar-icon-date {
   }
   #dock {
     transform: scale(1.2) translateX(-40%);
-    bottom: 10vh;
   }
 }
-
