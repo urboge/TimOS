@@ -160,3 +160,32 @@ setInterval(updateCalendarIcon, 60 * 1000);
 
 const terminalInput = document.getElementById("terminal-input")
 terminalInput.value = ">";
+
+
+//Full screen
+
+const enterBtn = document.getElementById('full-screen-btn');
+const exitBtn  = document.getElementById('exit-full-screen-btn');
+
+          // Enter fullscreen
+enterBtn.onclick = () => {
+  const el = document.documentElement;
+  (el.requestFullscreen ||
+   el.webkitRequestFullscreen ||
+   el.mozRequestFullScreen ||
+   el.msRequestFullscreen).call(el);
+
+  enterBtn.style.display = "none";
+  exitBtn.style.display = "block";
+};
+
+          // Exit fullscreen
+exitBtn.onclick = () => {
+  (document.exitFullscreen ||
+   document.webkitExitFullscreen ||
+   document.mozCancelFullScreen ||
+   document.msExitFullscreen).call(document);
+
+  exitBtn.style.display = "none";
+  enterBtn.style.display = "block";
+};
