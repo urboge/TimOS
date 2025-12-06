@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const transparentTaskbarBtn = document.getElementById("transparent-taskbar-btn");
   const dock = document.getElementById("dock");
 
-  floatingTaskbarBtn.addEventListener("click", () => {
+  function floatingTaskbar() {
     dock.style.transition = "0.2s";
     dock.style.minWidth = "100px";
     dock.style.bottom = "20px";
@@ -42,9 +42,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       dock.style.backgroundColor = "rgb(255, 255, 255, 0.2)";
     }
-  });
+  };
 
-  fullWidthTaskbarBtn.addEventListener("click", () => {
+  function fullWidthTaskbar() {
     dock.style.transition = "0.2s";
     dock.style.borderRadius = "0px";
     dock.style.bottom = "0px";
@@ -57,9 +57,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       dock.style.backgroundColor = "rgb(255, 255, 255, 0.5)";
     }
-  });
+  };
 
-  transparentTaskbarBtn.addEventListener("click", () => {
+  function transparentTaskbar() {
     dock.style.transition = "0.2s";
     dock.style.minWidth = "100%";
     dock.style.bottom = "0px";
@@ -72,7 +72,25 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       dock.style.backgroundColor = "rgb(255, 255, 255, 0)";
     }
-  });
+  };
+
+  floatingTaskbarBtn.onclick = function() {
+    floatingTaskbar();
+    localStorage.setItem("dock position", "floatingTaskbar")
+  }
+  fullWidthTaskbarBtn.onclick = function() {
+    fullWidthTaskbar();
+    localStorage.setItem("dock position", "fullWidthTaskbar")
+  }
+  transparentTaskbarBtn.onclick = function() {
+    transparentTaskbar();
+    localStorage.setItem("dock position", "transparentTaskbar")
+  }
+
+  let dockPosition = localStorage.getItem("dock position");
+  if(dockPosition === "fullWidthTaskbar"){fullWidthTaskbar();}
+  else if(dockPosition === "transparentTaskbar"){transparentTaskbar();}
+  else{floatingTaskbar();}
 
   const hundredScreenHeight = document.getElementById("hundred-screen-height");
   const ninetyFiveScreenHeight = document.getElementById("ninety-five-screen-height");
