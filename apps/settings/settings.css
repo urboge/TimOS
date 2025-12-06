@@ -138,3 +138,36 @@ body.dark-mode #settings-info-display button {
   border: solid 1px rgba(255, 255, 255, 0.5);
   color: white;
 }
+
+#settings-info-top-bar-background {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#settings-info-top-bar button {
+  background-color: transparent;
+  border: solid 2px rgba(0, 0, 0, 0.5);
+  width: 150px;
+  height: 50px;
+  border-radius: 50px;
+  color: rgb(0, 0, 0);
+  font-size: 20px;
+  transition: 0.4s;
+  margin-left: 10px;
+}
+
+body.dark-mode #settings-info-top-bar button {
+  border: solid 1px rgba(255, 255, 255, 0.5);
+  color: white;
+}
+
+#settings-info-top-bar button:active {
+  transform: scale(1.05) translateX(15px) translateY(10px) scale(0.98);
+  border-radius: 140px 200px 160px 200px;
+  width: 160px;
+  height: 45px;
+  transition: 0.1s;
+  margin-right: 20px;
+}
