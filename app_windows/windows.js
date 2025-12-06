@@ -176,22 +176,4 @@ document.addEventListener("DOMContentLoaded", () => {
   if (darkModeBtn) darkModeBtn.addEventListener("click", toggleDarkMode);
   if (localStorage.getItem("theme") === "dark") toggleDarkMode();
 
-  // ==================== TASKBAR BUTTONS ====================
-  const floatingTaskbarBtn = document.getElementById("floating-taskbar-btn");
-  const fullWidthTaskbarBtn = document.getElementById("full-width-taskbar-btn");
-
-  fullWidthTaskbarBtn?.addEventListener("mouseover", () => {
-    dock.style.transition = "1s";
-    dock.style.width = "100%";
-    dock.style.bottom = "0";
-  });
-
-  floatingTaskbarBtn?.addEventListener("click", () => {
-    dock.style.transition = "1s";
-    dock.style.width = "unset";
-    dock.style.minWidth = "100px";
-    dock.style.bottom = "20px";
-    dock.style.borderRadius = "30px";
-  });
-
 });
