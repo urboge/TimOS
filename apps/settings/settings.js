@@ -1,26 +1,32 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const settingsMenuPersonaliseBtn = document.getElementById("settings-menu-personalise-btn");
   const settingsMenuTaskbarBtn = document.getElementById("settings-menu-taskbar-btn");
   const settingsMenuDisplayBtn = document.getElementById("settings-menu-display-btn");
-  const settingsMenuSoundBtn = document.getElementById("settings-menu-sound-btn");
+  const settingsMenuTopBarBtn = document.getElementById("settings-menu-top-bar-btn");
 
   const settingsInfoTaskbar = document.getElementById("settings-info-taskbar");
   const settingsInfoDisplay = document.getElementById("settings-info-display");
+  const settingsInfoTopBar = document.getElementById("settings-info-top-bar");
 
-  function hello() {
+  function settingsMenu() {
     settingsInfoTaskbar.style.display = "none";
     settingsInfoDisplay.style.display = "none";
+    settingsInfoTopBar.style.display = "none";
   }
 
   settingsMenuTaskbarBtn.onclick = function () {
-    hello();
+    settingsMenu();
     settingsInfoTaskbar.style.display = "inline";
   };
 
   settingsMenuDisplayBtn.onclick = function () {
-    hello();
+    settingsMenu();
     settingsInfoDisplay.style.display = "inline";
+  };
+
+  settingsMenuTopBarBtn.onclick = function () {
+    settingsMenu();
+    settingsInfoTopBar.style.display = "inline";
   };
 
   const floatingTaskbarBtn = document.getElementById("floating-taskbar-btn");
@@ -74,23 +80,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  floatingTaskbarBtn.onclick = function() {
+  floatingTaskbarBtn.onclick = function () {
     floatingTaskbar();
     localStorage.setItem("dock position", "floatingTaskbar")
   }
-  fullWidthTaskbarBtn.onclick = function() {
+  fullWidthTaskbarBtn.onclick = function () {
     fullWidthTaskbar();
     localStorage.setItem("dock position", "fullWidthTaskbar")
   }
-  transparentTaskbarBtn.onclick = function() {
+  transparentTaskbarBtn.onclick = function () {
     transparentTaskbar();
     localStorage.setItem("dock position", "transparentTaskbar")
   }
 
   let dockPosition = localStorage.getItem("dock position");
-  if(dockPosition === "fullWidthTaskbar"){fullWidthTaskbar();}
-  else if(dockPosition === "transparentTaskbar"){transparentTaskbar();}
-  else{floatingTaskbar();}
+  if (dockPosition === "fullWidthTaskbar") { fullWidthTaskbar(); }
+  else if (dockPosition === "transparentTaskbar") { transparentTaskbar(); }
+  else { floatingTaskbar(); }
 
   const hundredScreenHeight = document.getElementById("hundred-screen-height");
   const ninetyFiveScreenHeight = document.getElementById("ninety-five-screen-height");
@@ -121,4 +127,23 @@ document.addEventListener("DOMContentLoaded", () => {
     body.style.height = height;
   }
 
+  const transparentTopBarBtn = document.getElementById("transparent-top-bar-btn");
+  const blurTopBarBtn = document.getElementById("blur-top-bar-btn");
+
+  const topBar = document.getElementById("menu-bar");
+
+  blurTopBarBtn.onclick = function () {
+    topBar.style.backdropFilter = "blur(20px)";
+    if (body.classList.contains("dark-mode")) {
+      topBar.style.backgroundColor = "rgba(0, 0, 0, 0.25)";
+    } else {
+      topBar.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+    }
+  };
+
+  transparentTopBarBtn.onclick = function () {
+    topBar.style.backdropFilter = "none";
+    topBar.style.backgroundColor = "rgba(0,0,0,0)";
+  };
+  
 });
