@@ -310,10 +310,10 @@ body.dark-mode #calendar-icon-date {
   body {
     width: 100%;
     height: 95vh;
-    width: 100%;
+    width: 100vw;
     top: 0;
     left: 0;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 }
 @media (max-width: 1000px) {
