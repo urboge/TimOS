@@ -310,7 +310,7 @@ body.dark-mode #calendar-icon-date {
   body {
     width: 100%;
     height: 95vh;
-    width: 100vw;
+    width: 100%;
     top: 0;
     left: 0;
     overflow-x: hidden;
@@ -330,5 +330,5 @@ body.dark-mode #calendar-icon-date {
   }
   #dock {
     transform: scale(1.2) translateX(-40%);
-  }
+  }     
 }
