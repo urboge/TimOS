@@ -10,8 +10,6 @@ body {
   margin: 0;
   transition: 1s, background-image 1s;
   z-index: 1;
-  position: fixed;
-  width: 100%;
 }
 
 input:focus {
