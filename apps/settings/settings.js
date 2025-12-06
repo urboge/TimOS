@@ -74,19 +74,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const defaultScreenSize = document.getElementById("default-screen-size");
-  const realScreenSize = document.getElementById("real-screen-size");
+  const hundredScreenHeight = document.getElementById("hundred-screen-height");
+  const ninetyFiveScreenHeight = document.getElementById("ninety-five-screen-height");
+  const ninetyScreenHeight = document.getElementById("ninety-screen-height");
 
-  defaultScreenSize.onclick = function () {
-    body.style.with = "100%"
-    if (window.innerWidth <= 768) {
-      body.style.height = "90vh";
-    } else if (window.innerWidth <= 1000) {
-      body.style.height = "90vh";
-    } else {
-      body.style.height = "100vh";
-    }
-  }
+  hundredScreenHeight.onclick = function () {
+    body.style.height = "100vh";
+  };
+
+  ninetyFiveScreenHeight.onclick = function () {
+    body.style.height = "95vh";
+  };
+
+  ninetyScreenHeight.onclick = function () {
+    body.style.height = "90vh";
+  };
 
   realScreenSize.onclick = function () {
     let width = window.innerWidth;
