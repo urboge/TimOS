@@ -80,15 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   hundredScreenHeight.onclick = function () {
     body.style.height = "100vh";
+    localStorage.setItem("screen height", "100");
+
   };
 
   ninetyFiveScreenHeight.onclick = function () {
     body.style.height = "95vh";
+    localStorage.setItem("screen height", "95");
   };
 
   ninetyScreenHeight.onclick = function () {
     body.style.height = "90vh";
+    localStorage.setItem("screen height", "90");
   };
+
+  body.style.height = localStorage.getItem("screen height") + "vh";
 
   realScreenSize.onclick = function () {
     let width = window.innerWidth;
