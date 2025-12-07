@@ -1,21 +1,39 @@
-function updateClock() {
-  const hourHand = document.getElementById("hand-hour");
-  const minuteHand = document.getElementById("hand-minute");
-  const secondHand = document.getElementById("hand-second");
-
-  const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const seconds = now.getSeconds();
-
-  const hourRotation = (hours % 12) * 30 + (minutes / 60) * 30;
-  const minuteRotation = minutes * 6;
-  const secondRotation = seconds * 6;
-
-  hourHand.style.transform = `translateX(-50%) rotate(${hourRotation}deg)`;
-  minuteHand.style.transform = `translateX(-50%) rotate(${minuteRotation}deg)`;
-  secondHand.style.transform = `translateX(-50%) rotate(${secondRotation}deg)`;
+#dynamic-island {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0px;
+  width: 96px;
+  height: 26px;
+  border-radius: 300px;
+  background-color: rgb(0, 0, 0);
+  z-index: 1;
+  border: solid 2px rgba(54, 54, 54, 0.5);
+  transition: 0.15s;
+  animation: dynamic-island-start 2s ease-out 0s;
+  box-shadow: 0 0 100px rgba(255, 255, 255, 0.6);
+  user-select: none; /* Standard */
+  -webkit-user-select: none; /* Safari */        
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  align-items: center;
+  justify-content: center;
 }
-
-document.addEventListener("DOMContentLoaded", updateClock);
-setInterval(updateClock, 1000);
+#dynamic-island:hover {
+  width: 100px;
+  height: 28px;
+  transition: 0.1s;
+}
+#dynamic-island:active {
+  width: 110px;
+  height: 22.5px;
+  transition: 0.1s;
+  top: 1px;
+  transform: translateX(-50%) scale(0.99);
+}
+#dynamic-island-timer {
+  transition: 0.15s;
+  color: rgb(255, 123, 0);
+  font-size: 30px;
+}
