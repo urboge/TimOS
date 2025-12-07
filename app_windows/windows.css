@@ -55,10 +55,12 @@
 .close-window { background: #ff5f56; transition: 0.15s;}
 .hide-window { background: #ffbd2e; transition: 0.15s;}
 .fullscreen-window { background: #27c93f; transition: 0.15s;}
+.grey-window {background: #acacac; transition: 0.15s;}
 
 .close-window:hover { background: #ff5f56; transform: scale(1.2);}
 .hide-window:hover { background: #ffbd2e; transform: scale(1.2);}
 .fullscreen-window:hover { background: #27c93f; transform: scale(1.2);}
+.grey-window:hover {background: #acacac; transform: scale(1.2);}
 
 .window-content {
   flex: 1;
