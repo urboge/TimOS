@@ -58,48 +58,15 @@ wallpaperNine.onclick = function () { background.src = "images/wallpapers/backgr
 /**
  * ON LOAD
  */
-const loadingAnimation = document.getElementById("loading-animation");
+
 
 window.addEventListener("load", function () {
-  // Hide loading animation
-  const loadingAnimation = document.getElementById("loading-animation");
-  if (loadingAnimation) {
-    setTimeout(() => {
-      loadingAnimation.style.display = "none";
-      body.style.backdropFilter = "blur(0)"
-      body.src = "images/wallpapers/background_three.jpg"
-    }, 5000);
-  }
 
   // Apply saved theme
   if (localStorage.getItem("theme") === "dark") {
     body.classList.add("dark-mode");
   }
 });
-
-/**
- * RELOADING
- */
-const reloadBtn = document.getElementById("reload-btn");
-const reloadVideo = document.getElementById("loading-video");
-const windowsContainer = document.getElementById("windows-container");
-
-reloadBtn.addEventListener("click", () => {
-  const loadingAnimation = document.getElementById("loading-animation");
-  reloadVideo.src = "videos/reloading screen.mp4";
-  windowsContainer.style.display = "none";
-  loadingAnimation.style.display = "flex";
-  loadingAnimation.style.opacity = "1";
-  menuBar.style.opacity = "0"
-  dock.style.opacity = "0"
-  reloadVideo.playbackRate = 1.0;
-  reloadVideo.currentTime = 0;
-  reloadVideo.play();
-  setTimeout(() => {
-    location.reload();
-  }, 4000);
-});
-
 
 /**
  * Date and time for the menu bar
