@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="apps/apps.css">
   <link rel="stylesheet" href="apps/settings/settings.css">
   <link rel="stylesheet" href="dynamic_island/dynamic-island.css">
+  <link rel="stylesheet" href="apps/clock/clock.css">
   <title>TKWebOS (Beta)</title>
 
   <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
@@ -15,17 +16,12 @@
 
 <body id="body">
 
-  <div id="loading-animation">
-
-  </div>
-
   <img src="images/wallpapers/background_three.jpg" alt="" id="background" style="filter: blur(0px) brightness(100%);">
 
   <nav id="menu-bar">
     <div>
       <button><ion-icon name="desktop-outline"></ion-icon></button>
       <button>TKWebOS</button>
-      <button id="reload-btn"><ion-icon name="refresh-outline"></ion-icon></button>
     </div>
     <div>
       <button id="full-screen-btn"><ion-icon name="scan-outline"></ion-icon></button>
@@ -83,7 +79,7 @@
     <div id="browser" class="app-icon"></div>
     <div id="calendar" class="app-icon">
       <p id="calendar-icon-week-day"
-        style="margin: 10px 0 0 0; font-weight: 600; text-align: center; color: rgb(255, 0, 0);">error</p>
+        style="margin: 15px 0 0 0; font-weight: 600; text-align: center; color: rgb(255, 0, 0);">error</p>
       <p id="calendar-icon-date" style="font-size: 30px; margin: 0; text-align: center; transition: 0.2s;">?</p>
     </div>
     <div id="terminal" class="app-icon">>_</div>
@@ -236,11 +232,16 @@
       <div class="title-bar">
         <button class="close-window"></button>
         <button class="hide-window"></button>
-        <button class="fullscreen-window"></button>
+        <button class="grey-window"></button>
         <p>Clock</p>
       </div>
-      <div class="window-content">
+      <div class="window-content" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
         <!-- Edit your content here -->
+         <button class="clock-btn" id="clock-minus-btn">-</button>
+         <p style="font-size: 30px;"><span id="clock-time">-</span><span>m</span></p>
+         <button class="clock-btn" id="clock-plus-btn">+</button>
+         <button class="clock-btn" id="clock-start-btn"><ion-icon name="play-outline"></ion-icon></button>
+         <button class="clock-btn" id="clock-reset-btn"><ion-icon name="reload-outline"></ion-icon></button>
       </div>
     </div>
 
