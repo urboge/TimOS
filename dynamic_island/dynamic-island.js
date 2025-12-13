@@ -10,7 +10,7 @@ window.onload = (event) => {
   dynamicIsland.style.width = "96px";
   dynamicIsland.innerHTML = ``
   dynamicIsland.style.fontSize = "26px";
-  dynamicIsland.style.top = "0";
+  dynamicIsland.style.top = "5px";
 };
 
 const photosIcon = document.getElementById("photos");
@@ -27,7 +27,7 @@ photosIcon.onclick = function () {
     dynamicIsland.style.width = "96px";
     dynamicIsland.innerHTML = ``
     dynamicIsland.style.fontSize = "26px";
-    dynamicIsland.style.top = "0";
+    dynamicIsland.style.top = "5px";
     clearTimeout(myTimer);
   }
 }
