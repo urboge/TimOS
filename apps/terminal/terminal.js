@@ -1,9 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const runTerminalBtn = document.getElementById("run-terminal-btn");
   const terminalInput = document.getElementById("terminal-input");
 
   const PCBackground = document.getElementById("background");
+
+  if (localStorage.getItem("background") = null) {
+    console.log("no wallpaper saved")
+  } else {
+    PCBackground.src = localStorage.getItem("background");
+  }
 
   runTerminalBtn.addEventListener("click", () => {
     const value = terminalInput.value.trim();
@@ -23,9 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
         dynamicIsland.style.width = "96px";
         dynamicIsland.innerHTML = ``
         dynamicIsland.style.fontSize = "26px";
-        dynamicIsland.style.top = "0";
+        dynamicIsland.style.top = "5px";
         clearTimeout(myTimer);
       }
+    }
+    else if (value === ">save-bg") {
+      let saveBg = PCBackground;
+      localStorage.setItem("background", saveBg);
     }
     else {
       console.log("Command not recognized:", value);
