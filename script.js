@@ -166,7 +166,8 @@ document.getElementById("save-background-btn").onclick = function() {
   localStorage.setItem("background", background.src)
 }
 if(localStorage.getItem("background") === "") {
-  background.src = "images/wallpapers/background_three.jpg"
+  console.log("no wallpaper saved")
 } else {
   background.src = localStorage.getItem("background");
 }
+
