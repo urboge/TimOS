@@ -51,14 +51,14 @@ body.dark-mode #settings-window .window-content .settings-menu button:hover {
   width: 100%;
   height: 100%;
 }
-.settings-info h1 {
+.settings-info h2 {
   font-size: 30px;
   margin-left: 5%;
   width: 90%;
   text-align: center;
   border-bottom: solid 1px black;
 }
-body.dark-mode .settings-info h1{
+body.dark-mode .settings-info h2{
   border-bottom: solid 1px white;
 }
 .settings-info #settings-info-taskbar {
