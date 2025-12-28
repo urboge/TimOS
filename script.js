@@ -31,7 +31,10 @@ controlCenter.onmouseleave = function () {
 /**
  * Wallpapers
  */
+
 const background = document.getElementById("background");
+
+background.style.filter = "blur(10px)"
 
 const wallpaper = document.getElementById("wallpaper");
 const wallpaperOne = document.getElementById("wallpaper-one");
@@ -46,9 +49,9 @@ const wallpaperNine = document.getElementById("wallpaper-nine");
 
 wallpaper.onclick = function () { background.src = "images/wallpapers/background.jpg" }
 wallpaperOne.onclick = function () { background.src = "images/wallpapers/background_one.jpg" }
-wallpaperTwo.onclick = function () { background.src = "images/wallpapers/background_two.jpg" }
+wallpaperTwo.onclick = function () { background.src = "images/wallpapers/background_two.png" }
 wallpaperThree.onclick = function () { background.src = "images/wallpapers/background_three.jpg" }
-wallpaperFour.onclick = function () { background.src = "images/wallpapers/background_four.jpg" }
+wallpaperFour.onclick = function () { background.src = "images/wallpapers/background_four.png" }
 wallpaperFive.onclick = function () { background.src = "images/wallpapers/background_five.jpg" }
 wallpaperSix.onclick = function () { background.src = "images/wallpapers/background_six.jpg" }
 wallpaperSeven.onclick = function () { background.src = "images/wallpapers/background_seven.jpg" }
@@ -61,6 +64,8 @@ wallpaperNine.onclick = function () { background.src = "images/wallpapers/backgr
 
 
 window.addEventListener("load", function () {
+
+  background.style.filter = "blur(0px)"
 
   // Apply saved theme
   if (localStorage.getItem("theme") === "dark") {
@@ -156,3 +161,12 @@ exitBtn.onclick = () => {
   exitBtn.style.display = "none";
   enterBtn.style.display = "block";
 };
+
+document.getElementById("save-background-btn").onclick = function() {
+  localStorage.setItem("background", background.src)
+}
+if(localStorage.getItem("background") === "") {
+  background.src = "images/wallpapers/background_three.jpg"
+} else {
+  background.src = localStorage.getItem("background");
+}
