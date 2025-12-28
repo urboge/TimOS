@@ -99,6 +99,12 @@ input:focus {
   border-radius: 0 0 10px 10px;
 }
 
+#menu-bar h1 {
+  font-size: 20px;
+  display: flex;
+  margin: 0;
+}
+
 body.dark-mode #menu-bar {
   background-color: rgba(0, 0, 0, 0.2);
   color: white;
