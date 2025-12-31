@@ -158,7 +158,7 @@ exitBtn.onclick = () => {
    document.mozCancelFullScreen ||
    document.msExitFullscreen).call(document);
 
-  exitBtn.style.display = "none";
+  exitBtn.style.display = "none";z
   enterBtn.style.display = "block";
 };
 
