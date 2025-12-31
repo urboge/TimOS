@@ -162,14 +162,18 @@ exitBtn.onclick = () => {
   enterBtn.style.display = "block";
 };
 
-document.getElementById("save-background-btn").onclick = function() {
-  localStorage.setItem("background", background.src)
+// Get references
+const saveButton = document.getElementById("save-background-btn");
 
-  const savedBackground = localStorage.getItem("background");
-}
-if(!savedBackground) {
-  console.log("no wallpaper saved")
+// When page loads, set background if it was saved
+const savedBackground = localStorage.getItem("background");
+if (savedBackground) {
+  background.src = savedBackground; // or use background.style.backgroundImage = `url(${savedBackground})` if it's a div
 } else {
-  background.src = localStorage.getItem("background");
+  console.log("No wallpaper saved");
 }
 
+// Save background when button is clicked
+saveButton.onclick = function() {
+  localStorage.setItem("background", background.src);
+};
