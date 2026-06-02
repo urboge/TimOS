@@ -123,11 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const savedHeight = localStorage.getItem("screenHeight") || "100";
   body.style.height = savedHeight + "vh";
 
-  realScreenSize.onclick = () => {
-    body.style.width = window.innerWidth + "px";
-    body.style.height = window.innerHeight + "px";
-  };
-
   // --- Top Bar Controls ---
   const topBar = document.getElementById("menu-bar");
   const transparentTopBarBtn = document.getElementById("transparent-top-bar-btn");
@@ -136,11 +131,23 @@ document.addEventListener("DOMContentLoaded", () => {
   blurTopBarBtn.onclick = () => {
     topBar.style.backdropFilter = "blur(20px)";
     topBar.style.backgroundColor = body.classList.contains("dark-mode") ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)";
+    localStorage.setItem("topBarStyle", "blur");
   };
 
   transparentTopBarBtn.onclick = () => {
     topBar.style.backdropFilter = "none";
     topBar.style.backgroundColor = "rgba(0,0,0,0)";
+    localStorage.setItem("topBarStyle", "transparent");
   };
+
+  // Restore saved top bar style — still inside DOMContentLoaded
+  const savedTopBar = localStorage.getItem("topBarStyle") || "blur";
+  if (savedTopBar === "transparent") {
+    topBar.style.backdropFilter = "none";
+    topBar.style.backgroundColor = "rgba(0,0,0,0)";
+  } else {
+    topBar.style.backdropFilter = "blur(20px)";
+    topBar.style.backgroundColor = body.classList.contains("dark-mode") ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)";
+  }
 
 });
