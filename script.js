@@ -176,14 +176,3 @@ if (savedBackground) {
 saveButton.onmousedown = function() {
   localStorage.setItem("background", background.src);
 };
-
-
-
-
-
-
-
-
-//NEWS NEWS NEWS NEWS NEWS NEWS
-
-document.getElementById("news").click();
