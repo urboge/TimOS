@@ -1,141 +1,189 @@
-document.addEventListener("DOMContentLoaded", () => {
+const body = document.body;
 
-  const body = document.body;
-  const dynamicIsland = document.getElementById("dynamic-island");
+const menuBar = document.getElementById("menu-bar");
+const dock = document.getElementById("dock");
 
-  // --- Settings Menu ---
-  const settingsMenuTaskbarBtn = document.getElementById("settings-menu-taskbar-btn");
-  const settingsMenuDisplayBtn = document.getElementById("settings-menu-display-btn");
-  const settingsMenuTopBarBtn = document.getElementById("settings-menu-top-bar-btn");
+/*Control center*/
+const controlCenter = document.getElementById("control-center");
+const controlCenterBtn = document.getElementById("control-center-btn");
 
-  const settingsInfoTaskbar = document.getElementById("settings-info-taskbar");
-  const settingsInfoDisplay = document.getElementById("settings-info-display");
-  const settingsInfoTopBar = document.getElementById("settings-info-top-bar");
+controlCenter.style.transform = "translateY(-15px) scale(0.97)";
 
-  function hideAllSettings() {
-    settingsInfoTaskbar.style.display = "none";
-    settingsInfoDisplay.style.display = "none";
-    settingsInfoTopBar.style.display = "none";
+controlCenterBtn.onclick = function () {
+  if (controlCenter.style.display === "none") {
+    controlCenter.style.display = "flex"
+    hideTimeout = setTimeout(() => {
+      controlCenter.style.opacity = "1"
+      controlCenter.style.transform = "translateY(0px) scale(1)"
+    }, 200);
   }
-
-  settingsMenuTaskbarBtn.onclick = () => { hideAllSettings(); settingsInfoTaskbar.style.display = "inline"; };
-  settingsMenuDisplayBtn.onclick = () => { hideAllSettings(); settingsInfoDisplay.style.display = "inline"; };
-  settingsMenuTopBarBtn.onclick = () => { hideAllSettings(); settingsInfoTopBar.style.display = "inline"; };
-
-  // --- Dock / Taskbar ---
-  const dock = document.getElementById("dock");
-  const floatingTaskbarBtn = document.getElementById("floating-taskbar-btn");
-  const fullWidthTaskbarBtn = document.getElementById("full-width-taskbar-btn");
-  const transparentTaskbarBtn = document.getElementById("transparent-taskbar-btn");
-
-  function setDockBackground(lightColor, darkColor) {
-    dock.style.backgroundColor = body.classList.contains("dark-mode") ? darkColor : lightColor;
+  else {
+    controlCenter.style.opacity = "0"
+    hideTimeout = setTimeout(() => {
+      controlCenter.style.display = "none"
+      controlCenter.style.transform = "translateY(-15px) scale(0.97)"
+    }, 200);
   }
+}
+controlCenter.onmouseleave = function () {
+  controlCenter.style.opacity = "0";
+  hideTimeout = setTimeout(() => {
+    controlCenter.style.display = "none"
+    controlCenter.style.transform = "translateY(-15px) scale(0.97)"
+  }, 200);
+}
 
-  function floatingTaskbar() {
-    dock.className = "floating";
-    dock.style.transition = "0.2s";
-    dock.style.minWidth = "100px";
-    dock.style.bottom = "20px";
-    dock.style.borderRadius = "42px";
-    dock.style.padding = "10px";
-    dock.style.backdropFilter = "blur(10px)";
-    dock.style.borderWidth = "2px";
-    setDockBackground("rgba(255,255,255,0.2)", "rgba(0,0,0,0.2)");
+/**
+ * Wallpapers
+ */
+
+const background = document.getElementById("background");
+
+background.style.filter = "blur(10px)"
+
+const wallpaper = document.getElementById("wallpaper");
+const wallpaperOne = document.getElementById("wallpaper-one");
+const wallpaperTwo = document.getElementById("wallpaper-two");
+const wallpaperThree = document.getElementById("wallpaper-three");
+const wallpaperFour = document.getElementById("wallpaper-four");
+const wallpaperFive = document.getElementById("wallpaper-five");
+const wallpaperSix = document.getElementById("wallpaper-six");
+const wallpaperSeven = document.getElementById("wallpaper-seven");
+
+wallpaper.onclick = function () { background.src = "images/wallpapers/1.png" }
+wallpaperOne.onclick = function () { background.src = "images/wallpapers/2.png" }
+wallpaperTwo.onclick = function () { background.src = "images/wallpapers/3.png" }
+wallpaperThree.onclick = function () { background.src = "images/wallpapers/4.png" }
+wallpaperFour.onclick = function () { background.src = "images/wallpapers/5.png" }
+wallpaperFive.onclick = function () { background.src = "images/wallpapers/6.png" }
+wallpaperSix.onclick = function () { background.src = "images/wallpapers/7.png" }
+wallpaperSeven.onclick = function () { background.src = "images/wallpapers/8.png" }
+
+/**
+ * ON LOAD
+ */
+
+
+window.addEventListener("load", function () {
+
+  background.style.filter = "blur(0px)"
+
+  // Apply saved theme
+  if (localStorage.getItem("theme") === "dark") {
+    body.classList.add("dark-mode");
   }
-
-  function fullWidthTaskbar() {
-    dock.className = "full-width";
-    dock.style.transition = "0.2s";
-    dock.style.borderRadius = "0";
-    dock.style.bottom = "0";
-    dock.style.padding = "10px 0";
-    dock.style.minWidth = "100%";
-    dock.style.backdropFilter = "blur(20px)";
-    dock.style.borderWidth = "1px";
-    setDockBackground("rgba(255,255,255,0.5)", "rgba(0,0,0,0.5)");
-  }
-
-  function transparentTaskbar() {
-    dock.className = "transparent";
-    dock.style.transition = "0.2s";
-    dock.style.minWidth = "100%";
-    dock.style.bottom = "0";
-    dock.style.borderRadius = "0";
-    dock.style.padding = "10px";
-    dock.style.backdropFilter = "none";
-    dock.style.borderWidth = "0";
-    setDockBackground("rgba(255,255,255,0)", "rgba(0,0,0,0)");
-  }
-
-  // --- Dynamic Island Animation ---
-  function dynamicIslandAnimation() {
-    dynamicIsland.style.height = "26px";
-    dynamicIsland.style.width = "96px";
-    dynamicIsland.innerHTML = `<ion-icon name="checkmark-outline" style="color: grey;"></ion-icon>`;
-    dynamicIsland.style.fontSize = "20px";
-    dynamicIsland.style.gap = "10px";
-
-    setTimeout(() => {
-      dynamicIsland.style.height = "26px";
-      dynamicIsland.style.width = "96px";
-      dynamicIsland.innerHTML = ``;
-      dynamicIsland.style.fontSize = "26px";
-      dynamicIsland.style.gap = "0px";
-    }, 1000);
-  }
-
-  // --- Dock Button Events ---
-  floatingTaskbarBtn.onclick = () => { floatingTaskbar(); localStorage.setItem("dockPosition", "floating"); dynamicIslandAnimation(); };
-  fullWidthTaskbarBtn.onclick = () => { fullWidthTaskbar(); localStorage.setItem("dockPosition", "fullWidth"); dynamicIslandAnimation(); };
-  transparentTaskbarBtn.onclick = () => { transparentTaskbar(); localStorage.setItem("dockPosition", "transparent"); dynamicIslandAnimation(); };
-
-  // --- Load Saved Dock Position ---
-  const savedDock = localStorage.getItem("dockPosition") || "floating";
-  if (savedDock === "fullWidth") fullWidthTaskbar();
-  else if (savedDock === "transparent") transparentTaskbar();
-  else floatingTaskbar();
-
-  // --- Screen Height Controls ---
-  const screenHeightInput = document.getElementById("input-screen-height");
-  const hundredScreenHeight = document.getElementById("hundred-screen-height");
-  const ninetyFiveScreenHeight = document.getElementById("ninety-five-screen-height");
-  const ninetyScreenHeight = document.getElementById("ninety-screen-height");
-  const eightyFiveScreenHeight = document.getElementById("eighty-five-screen-height");
-  const saveScreenHeight = document.getElementById("save-screen-height");
-  const realScreenSize = document.getElementById("real-screen-size");
-
-  function setBodyHeight(value) {
-    body.style.height = value + "vh";
-    localStorage.setItem("screenHeight", value);
-    dynamicIslandAnimation();
-  }
-
-  hundredScreenHeight.onclick = () => setBodyHeight(100);
-  ninetyFiveScreenHeight.onclick = () => setBodyHeight(95);
-  ninetyScreenHeight.onclick = () => setBodyHeight(90);
-  eightyFiveScreenHeight.onclick = () => setBodyHeight(85);
-  saveScreenHeight.onclick = () => {
-    const value = parseInt(screenHeightInput.value);
-    if (!isNaN(value)) setBodyHeight(value);
-  };
-
-  const savedHeight = localStorage.getItem("screenHeight") || "100";
-  body.style.height = savedHeight + "vh";
-
-  // --- Top Bar Controls ---
-  const topBar = document.getElementById("menu-bar");
-  const transparentTopBarBtn = document.getElementById("transparent-top-bar-btn");
-  const blurTopBarBtn = document.getElementById("blur-top-bar-btn");
-
-  blurTopBarBtn.onclick = () => {
-    topBar.style.backdropFilter = "blur(20px)";
-    topBar.style.backgroundColor = body.classList.contains("dark-mode") ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)";
-  };
-
-  transparentTopBarBtn.onclick = () => {
-    topBar.style.backdropFilter = "none";
-    topBar.style.backgroundColor = "rgba(0,0,0,0)";
-  };
-
 });
+
+/**
+ * Date and time for the menu bar
+ */
+function updateDateTime() {
+  const now = new Date();
+
+  // Date parts
+  const weekday = now.toLocaleDateString('en-US', { weekday: 'short' });
+  const month = now.toLocaleDateString('en-US', { month: 'short' });
+  const day = now.getDate();
+
+  document.getElementById("menu-bar-date").textContent =
+    `${weekday} ${month} ${day}`;
+
+  // Time parts in 12-hour format
+  let hours = now.getHours();
+  let minutes = now.getMinutes();
+  let ampm = hours >= 12 ? "PM" : "AM";
+
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0 becomes 12
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+
+  document.getElementById("menu-bar-time").textContent =
+    `${hours}:${minutes} ${ampm}`;
+}
+
+// Run immediately
+updateDateTime();
+
+// Update every second
+setInterval(updateDateTime, 1000);
+
+/**
+ * Date on the calendars app
+ */
+function updateCalendarIcon() {
+  const now = new Date();
+
+  // Get weekday name (Mon, Tue, ...)
+  const weekday = now.toLocaleDateString('en-US', { weekday: 'short' });
+
+  // Get day of month
+  const day = now.getDate();
+
+  // Update elements
+  document.getElementById("calendar-icon-week-day").textContent = weekday;
+  document.getElementById("calendar-icon-date").textContent = day;
+}
+
+// Run immediately
+updateCalendarIcon();
+
+// Update once a minute (in case date changes at midnight)
+setInterval(updateCalendarIcon, 60 * 1000);
+
+
+
+
+//Full screen
+
+const enterBtn = document.getElementById('full-screen-btn');
+const exitBtn  = document.getElementById('exit-full-screen-btn');
+
+          // Enter fullscreen
+enterBtn.onclick = () => {
+  const el = document.documentElement;
+  (el.requestFullscreen ||
+   el.webkitRequestFullscreen ||
+   el.mozRequestFullScreen ||
+   el.msRequestFullscreen).call(el);
+
+  enterBtn.style.display = "none";
+  exitBtn.style.display = "block";
+};
+
+          // Exit fullscreen
+exitBtn.onclick = () => {
+  (document.exitFullscreen ||
+   document.webkitExitFullscreen ||
+   document.mozCancelFullScreen ||
+   document.msExitFullscreen).call(document);
+
+  exitBtn.style.display = "none";z
+  enterBtn.style.display = "block";
+};
+
+// Get references
+const saveButton = document.getElementById("save-background-btn");
+
+// When page loads, set background if it was saved
+const savedBackground = localStorage.getItem("background");
+if (savedBackground) {
+  background.src = savedBackground; // or use background.style.backgroundImage = `url(${savedBackground})` if it's a div
+} else {
+  console.log("No wallpaper saved");
+}
+
+// Save background when button is clicked
+saveButton.onmousedown = function() {
+  localStorage.setItem("background", background.src);
+};
+
+
+
+
+
+
+
+
+//NEWS NEWS NEWS NEWS NEWS NEWS
+
+document.getElementById("news").click();
