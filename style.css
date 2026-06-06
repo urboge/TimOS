@@ -64,9 +64,9 @@ input:focus {
 #menu-bar {
   display: flex;
   position: fixed;
-  width: 99%;
+  width: 100%;
   top: 0;
-  left: 0;
+  left: -0.5%;
   height: 35px;
   padding: 0 5px;
   align-items: center;
