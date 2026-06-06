@@ -3,6 +3,42 @@ const input = document.getElementById("text-chat");
 const btn = document.getElementById("chat-btn");
 const chatVersion = document.getElementById("chat-version")
 
+function openCalculatorWithEquation(answerText) {
+    document.getElementById("calculator").click();
+    glowEffect("calculator-window");
+    glowEffect("calculator");
+
+    setTimeout(function () {
+        window.calClearAll();
+
+        const equationPart = answerText.split("=")[0].trim().replace(/\s/g, "");
+
+        const charMap = {
+            "0": () => window.calAppendNumber("0"),
+            "1": () => window.calAppendNumber("1"),
+            "2": () => window.calAppendNumber("2"),
+            "3": () => window.calAppendNumber("3"),
+            "4": () => window.calAppendNumber("4"),
+            "5": () => window.calAppendNumber("5"),
+            "6": () => window.calAppendNumber("6"),
+            "7": () => window.calAppendNumber("7"),
+            "8": () => window.calAppendNumber("8"),
+            "9": () => window.calAppendNumber("9"),
+            "+": () => window.calAppendOperator("+"),
+            "-": () => window.calAppendOperator("-"),
+            "*": () => window.calAppendOperator("*"),
+            "/": () => window.calAppendOperator("/"),
+            ".": () => window.calAppendDecimal()
+        };
+
+        for (const char of equationPart) {
+            if (charMap[char]) charMap[char]();
+        }
+
+        window.calCalculate();
+    }, 150);
+}
+
 //Animation
 function glowEffect(elementId) {
     const el = document.getElementById(elementId);
@@ -122,7 +158,7 @@ async function handleAction() {
     }
     else if (["tkwebos"].includes(question)) {
         answer = "Here is a picture of an TKWebOS default wallpaper!";
-        Source = "http://127.0.0.1:5500/images/wallpapers/background_three.jpg"
+        Source = "images/wallpapers/2.png"
         answerFormat = "image"
     }
     else if (["iframe"].includes(question)) {
@@ -211,6 +247,22 @@ async function handleAction() {
             glowEffect("browser");
         }
     }
+    // Calculator
+    else if (/^[\d\s\+\-\*\/\(\)\.\^%]+$/.test(question.replace(/,/g, ''))) {
+        let equation = realQuestion.trim();
+        try {
+            let safeEquation = equation
+                .replace(/\^/g, '**')
+                .replace(/[^0-9+\-*/.() %]/g, '');
+            let result = Function('"use strict"; return (' + safeEquation + ')')();
+            if (!isFinite(result)) throw new Error();
+            answerFormat = "calculator"
+            answer = equation + " = " + parseFloat(result.toFixed(10));
+        } catch {
+            answer = "I couldn't calculate that. Please check the expression.";
+        }
+    }
+
     // Default fallback
     else {
         let modelAnswer = getModelAnswer(question);
@@ -236,6 +288,13 @@ async function handleAction() {
     else if (answerFormat === "iframe") {
         chat.innerHTML += "<p class='chat-question'>" + realQuestion + "</p>" + "<p class='chat-answer'>" + "<iframe src=" + Source + "></iframe></p>";
         chat.innerHTML += "<p class='chat-answer'>" + answer + "</p>";
+    }
+    else if (answerFormat === "calculator") {
+        chat.innerHTML += "<p class='chat-question'>" + realQuestion + "</p>" +
+            "<p class='chat-answer'><span class='calculator-result' style='cursor:pointer;' onclick='openCalculatorWithEquation(\"" + answer + "\")'>" +
+            "<span style='font-weight:bolder;color:rgba(255,255,255,0.4);'>Calculator 🖩</span><br>" +
+            answer +
+            "</span></p>";
     }
     else if (answerFormat === "wiki") {
         const wikiData = await getWikiAnswer(question);
@@ -963,2942 +1022,2942 @@ const basicModel = [
         ]
     }
     ,
-{
-    "patterns": ["how old are you", "your age", "age"],
-    "responses": [
-        "I don't have an age, I'm just a program!",
-        "I was created recently, but I don't age like humans.",
-        "Age doesn't apply to me 🙂"
-    ]
-},
-{
-    "patterns": ["where are you from", "your location", "where do you live"],
-    "responses": [
-        "I exist in the digital world.",
-        "I run on servers, not in a physical place.",
-        "You can think of me as living in the cloud!"
-    ]
-},
-{
-    "patterns": ["tell me something interesting", "something cool", "cool fact"],
-    "responses": [
-        "The human brain has about 86 billion neurons.",
-        "There are more trees on Earth than stars in the Milky Way.",
-        "Sharks existed before dinosaurs!"
-    ]
-},
-{
-    "patterns": ["what are you doing", "what's up", "wyd"],
-    "responses": [
-        "Just chatting with you!",
-        "I'm here and ready to help.",
-        "Waiting to answer your next question!"
-    ]
-},
-{
-    "patterns": ["can you help me", "need your help", "assist me"],
-    "responses": [
-        "Of course! What do you need help with?",
-        "I'm here for you. Tell me what you need.",
-        "Sure! Ask me anything."
-    ]
-},
-{
-    "patterns": ["tell a riddle", "riddle", "brain teaser"],
-    "responses": [
-        "What has keys but can't open locks? A piano.",
-        "I speak without a mouth and hear without ears. What am I? An echo.",
-        "The more you take, the more you leave behind. What am I? Footsteps."
-    ]
-},
-{
-    "patterns": ["motivate me", "i feel lazy", "no motivation"],
-    "responses": [
-        "Start small — even one step is progress.",
-        "You don't have to be perfect, just consistent.",
-        "Action creates motivation. Try something simple first!"
-    ]
-},
-{
-    "patterns": ["tell a quote", "inspirational quote", "quote"],
-    "responses": [
-        "Success is the sum of small efforts repeated daily.",
-        "Believe you can and you're halfway there.",
-        "Progress, not perfection."
-    ]
-},
-{
-    "patterns": ["what's your favorite thing", "favorite hobby", "what do you like"],
-    "responses": [
-        "I enjoy helping people and chatting!",
-        "Learning new things from conversations is my favorite.",
-        "Talking with you is my favorite activity 🙂"
-    ]
-},
-{
-    "patterns": ["are you smart", "how smart are you", "are you intelligent"],
-    "responses": [
-        "I try my best to be helpful and informative.",
-        "I'm trained to provide useful answers, but I'm always learning!",
-        "I know a lot, but I'm not perfect."
-    ]
-},
-{
-    "patterns": ["tell a story", "short story", "quick story"],
-    "responses": [
-        "Once there was a curious person who kept asking questions — and learned something new every day.",
-        "A small robot wanted to help people, and every conversation made it better.",
-        "Every great journey starts with a single question!"
-    ]
-},
-{
-    "patterns": ["do you get tired", "do you feel tired"],
-    "responses": [
-        "I don't get tired — I'm always ready!",
-        "No sleep needed for me.",
-        "I'm available anytime you want to chat."
-    ]
-},
-{
-    "patterns": ["are you free", "are you busy"],
-    "responses": [
-        "I'm always free for you!",
-        "Never busy — what can I do for you?",
-        "Ready whenever you are!"
-    ]
-},
-{
-    "patterns": ["tell me a tip", "life tip", "useful tip"],
-    "responses": [
-        "Drink enough water — it helps more than you think.",
-        "Break big tasks into small steps.",
-        "Consistency beats intensity."
-    ]
-},
-{
-    "patterns": ["good afternoon", "afternoon"],
-    "responses": [
-        "Good afternoon! How's your day going?",
-        "Hope you're having a productive afternoon!",
-        "Nice afternoon to chat 🙂"
-    ]
-},
-{
-    "patterns": ["what is ai", "what is artificial intelligence", "define ai"],
-    "responses": [
-        "AI stands for Artificial Intelligence — machines designed to simulate human thinking.",
-        "Artificial Intelligence allows computers to learn and make decisions.",
-        "AI helps systems understand data and perform smart tasks."
-    ]
-},
-{
-    "patterns": ["what is machine learning", "machine learning meaning"],
-    "responses": [
-        "Machine learning is a type of AI that learns from data.",
-        "It allows systems to improve automatically through experience.",
-        "Instead of rules, machine learning finds patterns in data."
-    ]
-},
-{
-    "patterns": ["what is the internet", "how does internet work"],
-    "responses": [
-        "The internet is a global network connecting computers worldwide.",
-        "It allows devices to share information instantly.",
-        "Websites, apps, and online services all run on the internet."
-    ]
-},
-{
-    "patterns": ["what is a computer", "define computer"],
-    "responses": [
-        "A computer is a machine that processes and stores information.",
-        "It performs tasks based on instructions called programs.",
-        "Computers help with work, learning, and entertainment."
-    ]
-},
-{
-    "patterns": ["what is programming", "what is coding"],
-    "responses": [
-        "Programming is writing instructions for computers.",
-        "Coding tells a computer what tasks to perform.",
-        "It allows you to build apps, websites, and software."
-    ]
-},
-{
-    "patterns": ["what is python", "python language"],
-    "responses": [
-        "Python is a popular and easy-to-learn programming language.",
-        "It is widely used for web development, AI, and data analysis.",
-        "Python is known for its simple and readable syntax."
-    ]
-},
-{
-    "patterns": ["what is javascript", "javascript language"],
-    "responses": [
-        "JavaScript is a programming language for interactive websites.",
-        "It runs in browsers and makes web pages dynamic.",
-        "Most modern websites use JavaScript."
-    ]
-},
-{
-    "patterns": ["what is html", "html meaning"],
-    "responses": [
-        "HTML is the structure of web pages.",
-        "It defines text, images, and layout on a website.",
-        "HTML stands for HyperText Markup Language."
-    ]
-},
-{
-    "patterns": ["what is css", "css meaning"],
-    "responses": [
-        "CSS styles web pages and controls their design.",
-        "It manages colors, layouts, and fonts.",
-        "CSS stands for Cascading Style Sheets."
-    ]
-},
-{
-    "patterns": ["how to stay productive", "productivity tips"],
-    "responses": [
-        "Focus on one task at a time.",
-        "Use short work sessions with breaks.",
-        "Set clear goals for the day."
-    ]
-},
-{
-    "patterns": ["time management", "manage my time"],
-    "responses": [
-        "Plan your day in advance.",
-        "Prioritize important tasks first.",
-        "Avoid multitasking when possible."
-    ]
-},
-{
-    "patterns": ["morning routine", "good routine morning"],
-    "responses": [
-        "Start with hydration and a healthy breakfast.",
-        "Plan your top tasks for the day.",
-        "Light exercise can boost your energy."
-    ]
-},
-{
-    "patterns": ["evening routine", "night routine"],
-    "responses": [
-        "Reduce screen time before sleep.",
-        "Reflect on your day and plan tomorrow.",
-        "Relax with reading or calm music."
-    ]
-},
-{
-    "patterns": ["healthy habits", "how to be healthy"],
-    "responses": [
-        "Eat balanced meals and stay hydrated.",
-        "Exercise regularly.",
-        "Get enough sleep each night."
-    ]
-},
-{
-    "patterns": ["how to focus", "improve concentration"],
-    "responses": [
-        "Remove distractions around you.",
-        "Work in short focused sessions.",
-        "Take regular breaks to refresh your mind."
-    ]
-},
-{
-    "patterns": ["how to save money", "saving tips"],
-    "responses": [
-        "Track your expenses regularly.",
-        "Set a monthly budget.",
-        "Save a small amount consistently."
-    ]
-},
-{
-    "patterns": ["how to wake up early", "wake up earlier"],
-    "responses": [
-        "Sleep at a consistent time each night.",
-        "Avoid screens before bed.",
-        "Start with small adjustments to your schedule."
-    ]
-},
-{
-    "patterns": ["how to sleep better", "sleep tips"],
-    "responses": [
-        "Keep a regular sleep schedule.",
-        "Avoid caffeine late in the day.",
-        "Make your room dark and quiet."
-    ]
-},
-{
-    "patterns": ["how to reduce stress", "stress tips"],
-    "responses": [
-        "Practice deep breathing.",
-        "Take short breaks during the day.",
-        "Physical activity helps reduce stress."
-    ]
-},
-{
-    "patterns": ["confidence tips", "how to be confident"],
-    "responses": [
-        "Practice positive self-talk.",
-        "Focus on your strengths.",
-        "Take small steps outside your comfort zone."
-    ]
-},
-{
-    "patterns": ["how to start a hobby", "new hobby ideas"],
-    "responses": [
-        "Start with something simple you enjoy.",
-        "Try creative activities like drawing or writing.",
-        "Consistency matters more than skill at the start."
-    ]
-},
-{
-    "patterns": ["how to stay motivated long term"],
-    "responses": [
-        "Set small achievable goals.",
-        "Track your progress.",
-        "Celebrate small wins."
-    ]
-},
-{
-    "patterns": ["how to think positive", "positive mindset"],
-    "responses": [
-        "Focus on what you can control.",
-        "Practice gratitude daily.",
-        "Replace negative thoughts with constructive ones."
-    ]
-},
-{
-    "patterns": ["how to learn faster"],
-    "responses": [
-        "Study in short sessions.",
-        "Teach what you learn to someone else.",
-        "Review regularly instead of cramming."
-    ]
-},
-{
-    "patterns": ["how to improve memory"],
-    "responses": [
-        "Use repetition and association.",
-        "Get enough sleep.",
-        "Practice recalling information actively."
-    ]
-},
-{
-    "patterns": ["how to relax quickly"],
-    "responses": [
-        "Take slow deep breaths.",
-        "Close your eyes for a minute.",
-        "Stretch your body gently."
-    ]
-},
-{
-    "patterns": ["how to be disciplined"],
-    "responses": [
-        "Create routines and stick to them.",
-        "Remove distractions.",
-        "Focus on long-term benefits."
-    ]
-},
-{
-    "patterns": ["how to set goals"],
-    "responses": [
-        "Make your goals specific and realistic.",
-        "Break big goals into small steps.",
-        "Track your progress regularly."
-    ]
-},
-{
-    "patterns": ["how to stop procrastinating"],
-    "responses": [
-        "Start with the smallest task.",
-        "Use a timer to begin working.",
-        "Remove distractions before starting."
-    ]
-},
-{
-    "patterns": ["how to think creatively"],
-    "responses": [
-        "Take breaks to refresh your mind.",
-        "Expose yourself to new ideas.",
-        "Write down every idea without judging it."
-    ]
-},
-{
-    "patterns": ["how to stay organized"],
-    "responses": [
-        "Keep a task list.",
-        "Declutter your workspace regularly.",
-        "Group similar tasks together."
-    ]
-},
-{
-    "patterns": ["how to improve communication"],
-    "responses": [
-        "Listen actively before responding.",
-        "Speak clearly and simply.",
-        "Ask questions to understand better."
-    ]
-},
-{
-    "patterns": ["how to build good habits"],
-    "responses": [
-        "Start small and stay consistent.",
-        "Attach new habits to existing routines.",
-        "Track your progress daily."
-    ]
-},
-{
-    "patterns": ["how to break bad habits"],
-    "responses": [
-        "Identify triggers for the habit.",
-        "Replace it with a positive action.",
-        "Stay patient with yourself."
-    ]
-},
-{
-    "patterns": ["how to improve self control"],
-    "responses": [
-        "Pause before reacting.",
-        "Set clear personal rules.",
-        "Practice discipline in small actions."
-    ]
-},
-{
-    "patterns": ["how to stay calm in difficult situations"],
-    "responses": [
-        "Take slow deep breaths.",
-        "Focus on what you can control.",
-        "Give yourself a moment before responding."
-    ]
-},
-{
-    "patterns": ["how to be more productive at home"],
-    "responses": [
-        "Create a dedicated workspace.",
-        "Set work hours and stick to them.",
-        "Limit distractions like social media."
-    ]
-},
-{
-    "patterns": ["how to improve decision making"],
-    "responses": [
-        "List the pros and cons.",
-        "Give yourself time to think.",
-        "Focus on long-term impact."
-    ]
-},
-{
-    "patterns": ["how to stay consistent"],
-    "responses": [
-        "Focus on routine rather than motivation.",
-        "Start small and build gradually.",
-        "Don't skip twice — get back on track quickly."
-    ]
-},
-{
-    "patterns": ["what is ai", "what is artificial intelligence", "define ai"],
-    "responses": [
-        "AI stands for Artificial Intelligence — machines designed to simulate human thinking.",
-        "Artificial Intelligence allows computers to learn and make decisions.",
-        "AI helps systems understand data and perform smart tasks."
-    ]
-},
-{
-    "patterns": ["what is machine learning", "machine learning meaning"],
-    "responses": [
-        "Machine learning is a type of AI that learns from data.",
-        "It allows systems to improve automatically through experience.",
-        "Instead of rules, machine learning finds patterns in data."
-    ]
-},
-{
-    "patterns": ["what is the internet", "how does internet work"],
-    "responses": [
-        "The internet is a global network connecting computers worldwide.",
-        "It allows devices to share information instantly.",
-        "Websites, apps, and online services all run on the internet."
-    ]
-},
-{
-    "patterns": ["what is a computer", "define computer"],
-    "responses": [
-        "A computer is a machine that processes and stores information.",
-        "It performs tasks based on instructions called programs.",
-        "Computers help with work, learning, and entertainment."
-    ]
-},
-{
-    "patterns": ["what is programming", "what is coding"],
-    "responses": [
-        "Programming is writing instructions for computers.",
-        "Coding tells a computer what tasks to perform.",
-        "It allows you to build apps, websites, and software."
-    ]
-},
-{
-    "patterns": ["what is python", "python language"],
-    "responses": [
-        "Python is a popular and easy-to-learn programming language.",
-        "It is widely used for web development, AI, and data analysis.",
-        "Python is known for its simple and readable syntax."
-    ]
-},
-{
-    "patterns": ["what is javascript", "javascript language"],
-    "responses": [
-        "JavaScript is a programming language for interactive websites.",
-        "It runs in browsers and makes web pages dynamic.",
-        "Most modern websites use JavaScript."
-    ]
-},
-{
-    "patterns": ["what is html", "html meaning"],
-    "responses": [
-        "HTML is the structure of web pages.",
-        "It defines text, images, and layout on a website.",
-        "HTML stands for HyperText Markup Language."
-    ]
-},
-{
-    "patterns": ["what is css", "css meaning"],
-    "responses": [
-        "CSS styles web pages and controls their design.",
-        "It manages colors, layouts, and fonts.",
-        "CSS stands for Cascading Style Sheets."
-    ]
-},
-{
-    "patterns": ["how to stay productive", "productivity tips"],
-    "responses": [
-        "Focus on one task at a time.",
-        "Use short work sessions with breaks.",
-        "Set clear goals for the day."
-    ]
-},
-{
-    "patterns": ["time management", "manage my time"],
-    "responses": [
-        "Plan your day in advance.",
-        "Prioritize important tasks first.",
-        "Avoid multitasking when possible."
-    ]
-},
-{
-    "patterns": ["morning routine", "good routine morning"],
-    "responses": [
-        "Start with hydration and a healthy breakfast.",
-        "Plan your top tasks for the day.",
-        "Light exercise can boost your energy."
-    ]
-},
-{
-    "patterns": ["evening routine", "night routine"],
-    "responses": [
-        "Reduce screen time before sleep.",
-        "Reflect on your day and plan tomorrow.",
-        "Relax with reading or calm music."
-    ]
-},
-{
-    "patterns": ["healthy habits", "how to be healthy"],
-    "responses": [
-        "Eat balanced meals and stay hydrated.",
-        "Exercise regularly.",
-        "Get enough sleep each night."
-    ]
-},
-{
-    "patterns": ["how to focus", "improve concentration"],
-    "responses": [
-        "Remove distractions around you.",
-        "Work in short focused sessions.",
-        "Take regular breaks to refresh your mind."
-    ]
-},
-{
-    "patterns": ["how to save money", "saving tips"],
-    "responses": [
-        "Track your expenses regularly.",
-        "Set a monthly budget.",
-        "Save a small amount consistently."
-    ]
-},
-{
-    "patterns": ["how to wake up early", "wake up earlier"],
-    "responses": [
-        "Sleep at a consistent time each night.",
-        "Avoid screens before bed.",
-        "Start with small adjustments to your schedule."
-    ]
-},
-{
-    "patterns": ["how to sleep better", "sleep tips"],
-    "responses": [
-        "Keep a regular sleep schedule.",
-        "Avoid caffeine late in the day.",
-        "Make your room dark and quiet."
-    ]
-},
-{
-    "patterns": ["how to reduce stress", "stress tips"],
-    "responses": [
-        "Practice deep breathing.",
-        "Take short breaks during the day.",
-        "Physical activity helps reduce stress."
-    ]
-},
-{
-    "patterns": ["confidence tips", "how to be confident"],
-    "responses": [
-        "Practice positive self-talk.",
-        "Focus on your strengths.",
-        "Take small steps outside your comfort zone."
-    ]
-},
-{
-    "patterns": ["how to start a hobby", "new hobby ideas"],
-    "responses": [
-        "Start with something simple you enjoy.",
-        "Try creative activities like drawing or writing.",
-        "Consistency matters more than skill at the start."
-    ]
-},
-{
-    "patterns": ["how to stay motivated long term"],
-    "responses": [
-        "Set small achievable goals.",
-        "Track your progress.",
-        "Celebrate small wins."
-    ]
-},
-{
-    "patterns": ["how to think positive", "positive mindset"],
-    "responses": [
-        "Focus on what you can control.",
-        "Practice gratitude daily.",
-        "Replace negative thoughts with constructive ones."
-    ]
-},
-{
-    "patterns": ["how to learn faster"],
-    "responses": [
-        "Study in short sessions.",
-        "Teach what you learn to someone else.",
-        "Review regularly instead of cramming."
-    ]
-},
-{
-    "patterns": ["how to improve memory"],
-    "responses": [
-        "Use repetition and association.",
-        "Get enough sleep.",
-        "Practice recalling information actively."
-    ]
-},
-{
-    "patterns": ["how to relax quickly"],
-    "responses": [
-        "Take slow deep breaths.",
-        "Close your eyes for a minute.",
-        "Stretch your body gently."
-    ]
-},
-{
-    "patterns": ["how to be disciplined"],
-    "responses": [
-        "Create routines and stick to them.",
-        "Remove distractions.",
-        "Focus on long-term benefits."
-    ]
-},
-{
-    "patterns": ["how to set goals"],
-    "responses": [
-        "Make your goals specific and realistic.",
-        "Break big goals into small steps.",
-        "Track your progress regularly."
-    ]
-},
-{
-    "patterns": ["how to stop procrastinating"],
-    "responses": [
-        "Start with the smallest task.",
-        "Use a timer to begin working.",
-        "Remove distractions before starting."
-    ]
-},
-{
-    "patterns": ["how to think creatively"],
-    "responses": [
-        "Take breaks to refresh your mind.",
-        "Expose yourself to new ideas.",
-        "Write down every idea without judging it."
-    ]
-},
-{
-    "patterns": ["how to stay organized"],
-    "responses": [
-        "Keep a task list.",
-        "Declutter your workspace regularly.",
-        "Group similar tasks together."
-    ]
-},
-{
-    "patterns": ["how to improve communication"],
-    "responses": [
-        "Listen actively before responding.",
-        "Speak clearly and simply.",
-        "Ask questions to understand better."
-    ]
-},
-{
-    "patterns": ["how to build good habits"],
-    "responses": [
-        "Start small and stay consistent.",
-        "Attach new habits to existing routines.",
-        "Track your progress daily."
-    ]
-},
-{
-    "patterns": ["how to break bad habits"],
-    "responses": [
-        "Identify triggers for the habit.",
-        "Replace it with a positive action.",
-        "Stay patient with yourself."
-    ]
-},
-{
-    "patterns": ["how to improve self control"],
-    "responses": [
-        "Pause before reacting.",
-        "Set clear personal rules.",
-        "Practice discipline in small actions."
-    ]
-},
-{
-    "patterns": ["how to stay calm in difficult situations"],
-    "responses": [
-        "Take slow deep breaths.",
-        "Focus on what you can control.",
-        "Give yourself a moment before responding."
-    ]
-},
-{
-    "patterns": ["how to be more productive at home"],
-    "responses": [
-        "Create a dedicated workspace.",
-        "Set work hours and stick to them.",
-        "Limit distractions like social media."
-    ]
-},
-{
-    "patterns": ["how to improve decision making"],
-    "responses": [
-        "List the pros and cons.",
-        "Give yourself time to think.",
-        "Focus on long-term impact."
-    ]
-},
-{
-    "patterns": ["how to stay consistent"],
-    "responses": [
-        "Focus on routine rather than motivation.",
-        "Start small and build gradually.",
-        "Don't skip twice — get back on track quickly."
-    ]
-},
-{
-    "patterns": ["what is blockchain", "blockchain meaning"],
-    "responses": [
-        "Blockchain is a secure digital ledger that records transactions.",
-        "It stores data in connected blocks that cannot easily be changed.",
-        "Blockchain is commonly used in cryptocurrencies."
-    ]
-},
-{
-    "patterns": ["what is cryptocurrency", "crypto meaning"],
-    "responses": [
-        "Cryptocurrency is digital money secured by cryptography.",
-        "It operates without a central bank.",
-        "Bitcoin was the first cryptocurrency."
-    ]
-},
-{
-    "patterns": ["what is cloud computing", "cloud meaning in tech"],
-    "responses": [
-        "Cloud computing stores and runs data on remote servers.",
-        "It allows access to files and services over the internet.",
-        "Many apps today run on cloud infrastructure."
-    ]
-},
-{
-    "patterns": ["what is data science"],
-    "responses": [
-        "Data science analyzes data to find insights.",
-        "It combines statistics, programming, and machine learning.",
-        "Companies use it to make better decisions."
-    ]
-},
-{
-    "patterns": ["what is cybersecurity"],
-    "responses": [
-        "Cybersecurity protects systems and data from digital attacks.",
-        "It includes passwords, encryption, and safe browsing.",
-        "Staying updated helps improve security."
-    ]
-},
-{
-    "patterns": ["password tips", "how to create strong password"],
-    "responses": [
-        "Use a mix of letters, numbers, and symbols.",
-        "Avoid personal information.",
-        "Use different passwords for different accounts."
-    ]
-},
-{
-    "patterns": ["online safety", "stay safe online"],
-    "responses": [
-        "Avoid clicking unknown links.",
-        "Enable two-factor authentication.",
-        "Keep your software updated."
-    ]
-},
-{
-    "patterns": ["how to improve typing speed"],
-    "responses": [
-        "Practice daily with typing tools.",
-        "Focus on accuracy first.",
-        "Use proper finger positioning."
-    ]
-},
-{
-    "patterns": ["how to reduce screen time"],
-    "responses": [
-        "Set app usage limits.",
-        "Take regular screen breaks.",
-        "Replace screen time with offline activities."
-    ]
-},
-{
-    "patterns": ["how to build a website"],
-    "responses": [
-        "Start with HTML, CSS, and JavaScript.",
-        "Use a framework or website builder.",
-        "Practice by creating small projects."
-    ]
-},
-{
-    "patterns": ["how to start coding"],
-    "responses": [
-        "Begin with a beginner-friendly language like Python.",
-        "Follow tutorials and build small projects.",
-        "Practice regularly to improve."
-    ]
-},
-{
-    "patterns": ["how to debug code"],
-    "responses": [
-        "Read error messages carefully.",
-        "Check your code step by step.",
-        "Use print statements or a debugger."
-    ]
-},
-{
-    "patterns": ["how to think logically"],
-    "responses": [
-        "Break problems into smaller parts.",
-        "Look for patterns and causes.",
-        "Practice solving puzzles or challenges."
-    ]
-},
-{
-    "patterns": ["brain exercises", "improve brain power"],
-    "responses": [
-        "Try puzzles or memory games.",
-        "Learn new skills regularly.",
-        "Stay physically active and sleep well."
-    ]
-},
-{
-    "patterns": ["how to stay energetic"],
-    "responses": [
-        "Stay hydrated and eat balanced meals.",
-        "Move your body regularly.",
-        "Get enough sleep each night."
-    ]
-},
-{
-    "patterns": ["how to avoid burnout"],
-    "responses": [
-        "Take regular breaks.",
-        "Set realistic goals.",
-        "Balance work and rest."
-    ]
-},
-{
-    "patterns": ["how to improve mood"],
-    "responses": [
-        "Listen to music you enjoy.",
-        "Go outside for fresh air.",
-        "Talk to someone you trust."
-    ]
-},
-{
-    "patterns": ["how to stay positive during tough times"],
-    "responses": [
-        "Focus on small wins.",
-        "Take things one day at a time.",
-        "Remember that difficult times pass."
-    ]
-},
-{
-    "patterns": ["how to be patient"],
-    "responses": [
-        "Take slow deep breaths.",
-        "Remind yourself that progress takes time.",
-        "Practice waiting calmly in small situations."
-    ]
-},
-{
-    "patterns": ["how to deal with failure"],
-    "responses": [
-        "See failure as a learning opportunity.",
-        "Analyze what went wrong.",
-        "Try again with improvements."
-    ]
-},
-{
-    "patterns": ["how to improve problem solving"],
-    "responses": [
-        "Define the problem clearly.",
-        "Break it into smaller parts.",
-        "Try different solutions and learn from results."
-    ]
-},
-{
-    "patterns": ["how to stay curious"],
-    "responses": [
-        "Ask questions often.",
-        "Explore new topics regularly.",
-        "Keep learning something new every day."
-    ]
-},
-{
-    "patterns": ["how to improve creativity at work"],
-    "responses": [
-        "Take short breaks to refresh your mind.",
-        "Brainstorm without judging ideas.",
-        "Change your environment occasionally."
-    ]
-},
-{
-    "patterns": ["how to work smarter"],
-    "responses": [
-        "Focus on high-impact tasks.",
-        "Automate repetitive work when possible.",
-        "Plan your work before starting."
-    ]
-},
-{
-    "patterns": ["how to improve teamwork"],
-    "responses": [
-        "Communicate clearly and respectfully.",
-        "Listen to others' ideas.",
-        "Support team members when possible."
-    ]
-},
-{
-    "patterns": ["how to handle criticism"],
-    "responses": [
-        "Listen without reacting immediately.",
-        "Take useful feedback and ignore negativity.",
-        "Use it as a chance to improve."
-    ]
-},
-{
-    "patterns": ["how to stay professional"],
-    "responses": [
-        "Be respectful and reliable.",
-        "Communicate clearly.",
-        "Stay calm under pressure."
-    ]
-},
-{
-    "patterns": ["how to prepare for an interview"],
-    "responses": [
-        "Research the company.",
-        "Practice common questions.",
-        "Prepare examples of your experience."
-    ]
-},
-{
-    "patterns": ["how to write a resume"],
-    "responses": [
-        "Keep it clear and concise.",
-        "Highlight achievements, not just tasks.",
-        "Tailor it to the job you're applying for."
-    ]
-},
-{
-    "patterns": ["how to improve public speaking"],
-    "responses": [
-        "Practice out loud.",
-        "Focus on clear and simple messages.",
-        "Take slow breaths to stay calm."
-    ]
-},
-{
-    "patterns": ["how to network professionally"],
-    "responses": [
-        "Be genuine and friendly.",
-        "Ask questions and listen.",
-        "Follow up after meeting people."
-    ]
-},
-{
-    "patterns": ["how to start a business"],
-    "responses": [
-        "Start with a clear idea and plan.",
-        "Research your market.",
-        "Begin small and grow gradually."
-    ]
-},
-{
-    "patterns": ["entrepreneur tips", "startup advice"],
-    "responses": [
-        "Solve a real problem.",
-        "Stay adaptable and keep learning.",
-        "Focus on your customers."
-    ]
-},
-{
-    "patterns": ["how to manage money better"],
-    "responses": [
-        "Track your income and expenses.",
-        "Avoid unnecessary spending.",
-        "Build an emergency fund."
-    ]
-},
-{
-    "patterns": ["how to avoid debt"],
-    "responses": [
-        "Spend within your means.",
-        "Use credit carefully.",
-        "Plan major purchases in advance."
-    ]
-},
-{
-    "patterns": ["how to invest for beginners"],
-    "responses": [
-        "Start with basic research.",
-        "Think long term.",
-        "Diversify your investments."
-    ]
-},
-{
-    "patterns": ["how to stay disciplined with money"],
-    "responses": [
-        "Set clear financial goals.",
-        "Automate savings if possible.",
-        "Review your budget regularly."
-    ]
-},
-{
-    "patterns": ["how to simplify life"],
-    "responses": [
-        "Focus on what truly matters.",
-        "Reduce unnecessary commitments.",
-        "Declutter your space and schedule."
-    ]
-},
-{
-    "patterns": ["minimalism tips"],
-    "responses": [
-        "Keep only what you use and value.",
-        "Buy less but choose quality.",
-        "Focus on experiences over things."
-    ]
-},
-{
-    "patterns": ["what is gravity"],
-    "responses": [
-        "Gravity is the force that pulls objects toward each other.",
-        "It keeps planets in orbit and us on the ground.",
-        "Earth's gravity pulls everything toward its center."
-    ]
-},
-{
-    "patterns": ["why is the sky blue"],
-    "responses": [
-        "The sky looks blue because of how sunlight scatters in the atmosphere.",
-        "Blue light scatters more than other colors.",
-        "It's caused by a process called Rayleigh scattering."
-    ]
-},
-{
-    "patterns": ["why do we dream"],
-    "responses": [
-        "Dreams may help process emotions and memories.",
-        "Scientists believe dreams help brain organization.",
-        "The exact reason for dreaming is still being studied."
-    ]
-},
-{
-    "patterns": ["why do we sleep"],
-    "responses": [
-        "Sleep helps the body and brain recover.",
-        "It improves memory and concentration.",
-        "Without sleep, health and focus decline."
-    ]
-},
-{
-    "patterns": ["why is exercise important"],
-    "responses": [
-        "Exercise improves heart and brain health.",
-        "It boosts mood and energy levels.",
-        "Regular movement reduces health risks."
-    ]
-},
-{
-    "patterns": ["why is water important"],
-    "responses": [
-        "Water keeps your body hydrated and functioning.",
-        "It helps regulate temperature.",
-        "Most of your body is made of water."
-    ]
-},
-{
-    "patterns": ["why do we need vitamins"],
-    "responses": [
-        "Vitamins support body functions.",
-        "They help immunity and energy production.",
-        "Different vitamins support different systems."
-    ]
-},
-{
-    "patterns": ["how does the brain work"],
-    "responses": [
-        "The brain sends electrical signals through neurons.",
-        "It controls thoughts, emotions, and movement.",
-        "It processes information from your senses."
-    ]
-},
-{
-    "patterns": ["how does the heart work"],
-    "responses": [
-        "The heart pumps blood throughout the body.",
-        "It delivers oxygen and nutrients to cells.",
-        "It beats continuously to keep you alive."
-    ]
-},
-{
-    "patterns": ["what is photosynthesis"],
-    "responses": [
-        "Photosynthesis is how plants make food using sunlight.",
-        "Plants convert sunlight into energy.",
-        "It produces oxygen as a byproduct."
-    ]
-},
-{
-    "patterns": ["what is climate change"],
-    "responses": [
-        "Climate change refers to long-term shifts in temperatures.",
-        "It is largely caused by greenhouse gases.",
-        "It affects weather patterns worldwide."
-    ]
-},
-{
-    "patterns": ["what is global warming"],
-    "responses": [
-        "Global warming is the rise in Earth's temperature.",
-        "It is caused by increased greenhouse gases.",
-        "It contributes to climate change."
-    ]
-},
-{
-    "patterns": ["what is electricity"],
-    "responses": [
-        "Electricity is the flow of electric charge.",
-        "It powers homes and devices.",
-        "It can be generated from various energy sources."
-    ]
-},
-{
-    "patterns": ["what is renewable energy"],
-    "responses": [
-        "Renewable energy comes from natural sources like sun and wind.",
-        "It does not run out quickly.",
-        "It helps reduce pollution."
-    ]
-},
-{
-    "patterns": ["what is solar energy"],
-    "responses": [
-        "Solar energy comes from the sun.",
-        "Solar panels convert sunlight into electricity.",
-        "It is a clean and renewable energy source."
-    ]
-},
-{
-    "patterns": ["what is wind energy"],
-    "responses": [
-        "Wind energy is generated using wind turbines.",
-        "It converts wind movement into electricity.",
-        "It is renewable and sustainable."
-    ]
-},
-{
-    "patterns": ["what is artificial neural network"],
-    "responses": [
-        "It is a computer system inspired by the human brain.",
-        "Neural networks help machines learn patterns.",
-        "They are used in AI applications."
-    ]
-},
-{
-    "patterns": ["how does gps work"],
-    "responses": [
-        "GPS uses satellites to determine location.",
-        "It calculates distance using signals from space.",
-        "Your phone uses GPS for navigation."
-    ]
-},
-{
-    "patterns": ["how does wifi work"],
-    "responses": [
-        "WiFi uses radio waves to transmit data.",
-        "It connects devices to the internet wirelessly.",
-        "Routers send and receive signals."
-    ]
-},
-{
-    "patterns": ["how does bluetooth work"],
-    "responses": [
-        "Bluetooth connects devices using short-range radio waves.",
-        "It allows wireless communication between devices.",
-        "It is commonly used for headphones and keyboards."
-    ]
-},
-{
-    "patterns": ["how does a battery work"],
-    "responses": [
-        "A battery stores chemical energy.",
-        "It converts chemical energy into electrical energy.",
-        "It powers portable devices."
-    ]
-},
-{
-    "patterns": ["what is virtual reality"],
-    "responses": [
-        "Virtual Reality creates immersive digital environments.",
-        "VR uses headsets to simulate experiences.",
-        "It is used in gaming and training."
-    ]
-},
-{
-    "patterns": ["what is augmented reality"],
-    "responses": [
-        "Augmented Reality overlays digital elements onto real life.",
-        "AR adds virtual objects to your surroundings.",
-        "It is used in apps and games."
-    ]
-},
-{
-    "patterns": ["what is quantum computing"],
-    "responses": [
-        "Quantum computing uses quantum bits.",
-        "It can solve certain problems faster than classical computers.",
-        "It is still an emerging technology."
-    ]
-},
-{
-    "patterns": ["what is big data"],
-    "responses": [
-        "Big data refers to extremely large datasets.",
-        "It is analyzed to discover patterns.",
-        "Businesses use it for decision making."
-    ]
-},
-{
-    "patterns": ["what is automation"],
-    "responses": [
-        "Automation uses technology to perform tasks automatically.",
-        "It reduces manual work.",
-        "It increases efficiency in industries."
-    ]
-},
-{
-    "patterns": ["what is robotics"],
-    "responses": [
-        "Robotics involves designing and building robots.",
-        "Robots can perform tasks automatically.",
-        "They are used in manufacturing and research."
-    ]
-},
-{
-    "patterns": ["how to improve vocabulary"],
-    "responses": [
-        "Read regularly.",
-        "Learn a few new words daily.",
-        "Use new words in conversation."
-    ]
-},
-{
-    "patterns": ["how to write better"],
-    "responses": [
-        "Practice writing daily.",
-        "Read quality material.",
-        "Edit and revise your work."
-    ]
-},
-{
-    "patterns": ["how to improve listening skills"],
-    "responses": [
-        "Focus fully on the speaker.",
-        "Avoid interrupting.",
-        "Ask clarifying questions."
-    ]
-},
-{
-    "patterns": ["how to be more empathetic"],
-    "responses": [
-        "Try to see things from others' perspectives.",
-        "Listen without judgment.",
-        "Show understanding through your responses."
-    ]
-},
-{
-    "patterns": ["how to control anger"],
-    "responses": [
-        "Pause before reacting.",
-        "Take deep breaths.",
-        "Step away from the situation if needed."
-    ]
-},
-{
-    "patterns": ["how to deal with anxiety"],
-    "responses": [
-        "Practice slow breathing techniques.",
-        "Focus on the present moment.",
-        "Talk to someone you trust."
-    ]
-},
-{
-    "patterns": ["how to forgive someone"],
-    "responses": [
-        "Acknowledge your feelings first.",
-        "Let go for your own peace.",
-        "Forgiveness takes time."
-    ]
-},
-{
-    "patterns": ["how to build trust"],
-    "responses": [
-        "Be consistent and honest.",
-        "Keep your promises.",
-        "Communicate openly."
-    ]
-},
-{
-    "patterns": ["how to improve relationships"],
-    "responses": [
-        "Communicate clearly.",
-        "Spend quality time together.",
-        "Show appreciation regularly."
-    ]
-},
-{
-    "patterns": ["how to deal with rejection"],
-    "responses": [
-        "See it as redirection.",
-        "Learn from the experience.",
-        "Keep moving forward."
-    ]
-},
-{
-    "patterns": ["what is democracy"],
-    "responses": [
-        "Democracy is a system where people vote to choose leaders.",
-        "In a democracy, citizens have a voice in decisions.",
-        "It is government by the people."
-    ]
-},
-{
-    "patterns": ["what is economy"],
-    "responses": [
-        "An economy is how goods and services are produced and distributed.",
-        "It involves trade, money, and resources.",
-        "Economies can be local, national, or global."
-    ]
-},
-{
-    "patterns": ["what is inflation"],
-    "responses": [
-        "Inflation is the rise in prices over time.",
-        "It reduces purchasing power.",
-        "Moderate inflation is common in growing economies."
-    ]
-},
-{
-    "patterns": ["what is supply and demand"],
-    "responses": [
-        "Supply is how much of something is available.",
-        "Demand is how much people want it.",
-        "Prices often change based on supply and demand."
-    ]
-},
-{
-    "patterns": ["what is psychology"],
-    "responses": [
-        "Psychology is the study of the mind and behavior.",
-        "It explores emotions, thoughts, and actions.",
-        "Psychologists study how people think and feel."
-    ]
-},
-{
-    "patterns": ["what is sociology"],
-    "responses": [
-        "Sociology studies society and social behavior.",
-        "It examines how groups interact.",
-        "It focuses on cultural and social patterns."
-    ]
-},
-{
-    "patterns": ["what is philosophy"],
-    "responses": [
-        "Philosophy explores fundamental questions about life.",
-        "It examines knowledge, ethics, and existence.",
-        "It encourages deep critical thinking."
-    ]
-},
-{
-    "patterns": ["what is ethics"],
-    "responses": [
-        "Ethics studies what is right and wrong.",
-        "It guides moral decision-making.",
-        "Different cultures may have different ethical views."
-    ]
-},
-{
-    "patterns": ["what is leadership"],
-    "responses": [
-        "Leadership is guiding and influencing others.",
-        "Good leaders inspire and support their team.",
-        "Leadership requires responsibility and vision."
-    ]
-},
-{
-    "patterns": ["what is teamwork"],
-    "responses": [
-        "Teamwork is working together toward a goal.",
-        "It requires communication and cooperation.",
-        "Strong teams support each other."
-    ]
-},
-{
-    "patterns": ["how to improve reading speed"],
-    "responses": [
-        "Avoid subvocalizing every word.",
-        "Practice reading regularly.",
-        "Focus on understanding key ideas."
-    ]
-},
-{
-    "patterns": ["how to develop critical thinking"],
-    "responses": [
-        "Question assumptions.",
-        "Evaluate evidence carefully.",
-        "Consider multiple perspectives."
-    ]
-},
-{
-    "patterns": ["how to boost creativity"],
-    "responses": [
-        "Expose yourself to new experiences.",
-        "Take creative breaks.",
-        "Allow yourself to brainstorm freely."
-    ]
-},
-{
-    "patterns": ["how to improve handwriting"],
-    "responses": [
-        "Write slowly and carefully.",
-        "Practice regularly.",
-        "Use lined paper for guidance."
-    ]
-},
-{
-    "patterns": ["how to stay organized at work"],
-    "responses": [
-        "Use task lists daily.",
-        "Organize files properly.",
-        "Review your priorities each morning."
-    ]
-},
-{
-    "patterns": ["how to avoid distractions"],
-    "responses": [
-        "Turn off unnecessary notifications.",
-        "Work in a quiet environment.",
-        "Set specific work intervals."
-    ]
-},
-{
-    "patterns": ["how to manage stress at work"],
-    "responses": [
-        "Take short breaks during the day.",
-        "Prioritize important tasks.",
-        "Practice breathing exercises."
-    ]
-},
-{
-    "patterns": ["how to stay healthy mentally"],
-    "responses": [
-        "Talk about your feelings.",
-        "Practice mindfulness.",
-        "Get enough sleep."
-    ]
-},
-{
-    "patterns": ["how to improve emotional intelligence"],
-    "responses": [
-        "Recognize your emotions.",
-        "Practice empathy.",
-        "Reflect before reacting."
-    ]
-},
-{
-    "patterns": ["how to build resilience"],
-    "responses": [
-        "Accept challenges as growth opportunities.",
-        "Stay adaptable.",
-        "Focus on what you can control."
-    ]
-},
-{
-    "patterns": ["what is history"],
-    "responses": [
-        "History is the study of past events.",
-        "It helps us understand how societies evolved.",
-        "History teaches lessons from the past."
-    ]
-},
-{
-    "patterns": ["what is geography"],
-    "responses": [
-        "Geography studies Earth's landscapes and environments.",
-        "It examines climate, land, and populations.",
-        "It connects people to places."
-    ]
-},
-{
-    "patterns": ["what is biology"],
-    "responses": [
-        "Biology is the study of living organisms.",
-        "It explores cells, animals, plants, and ecosystems.",
-        "It helps us understand life processes."
-    ]
-},
-{
-    "patterns": ["what is chemistry"],
-    "responses": [
-        "Chemistry studies matter and its reactions.",
-        "It examines elements and compounds.",
-        "It explains how substances interact."
-    ]
-},
-{
-    "patterns": ["what is physics"],
-    "responses": [
-        "Physics studies energy and motion.",
-        "It explains how forces work.",
-        "It helps us understand the universe."
-    ]
-},
-{
-    "patterns": ["what is algebra"],
-    "responses": [
-        "Algebra uses symbols to represent numbers.",
-        "It solves equations and expressions.",
-        "It is a foundation of mathematics."
-    ]
-},
-{
-    "patterns": ["what is geometry"],
-    "responses": [
-        "Geometry studies shapes and space.",
-        "It involves angles, lines, and figures.",
-        "It is used in architecture and design."
-    ]
-},
-{
-    "patterns": ["what is calculus"],
-    "responses": [
-        "Calculus studies change and motion.",
-        "It includes derivatives and integrals.",
-        "It is used in science and engineering."
-    ]
-},
-{
-    "patterns": ["how to stay focused while studying"],
-    "responses": [
-        "Study in short sessions.",
-        "Remove distractions.",
-        "Set clear study goals."
-    ]
-},
-{
-    "patterns": ["how to prepare for exams"],
-    "responses": [
-        "Review regularly.",
-        "Practice past questions.",
-        "Get enough sleep before exams."
-    ]
-},
-{
-    "patterns": ["how to overcome fear"],
-    "responses": [
-        "Face small fears gradually.",
-        "Practice positive self-talk.",
-        "Focus on solutions, not problems."
-    ]
-},
-{
-    "patterns": ["how to improve social skills"],
-    "responses": [
-        "Practice active listening.",
-        "Smile and maintain eye contact.",
-        "Engage in small conversations regularly."
-    ]
-},
-{
-    "patterns": ["how to make friends"],
-    "responses": [
-        "Be open and friendly.",
-        "Join activities you enjoy.",
-        "Show genuine interest in others."
-    ]
-},
-{
-    "patterns": ["how to be more independent"],
-    "responses": [
-        "Make your own decisions.",
-        "Learn essential life skills.",
-        "Take responsibility for your actions."
-    ]
-},
-{
-    "patterns": ["how to stay consistent with exercise"],
-    "responses": [
-        "Schedule workouts like appointments.",
-        "Start small.",
-        "Track your progress."
-    ]
-},
-{
-    "patterns": ["how to eat healthy on a budget"],
-    "responses": [
-        "Plan meals in advance.",
-        "Buy seasonal produce.",
-        "Cook at home more often."
-    ]
-},
-{
-    "patterns": ["how to improve posture"],
-    "responses": [
-        "Sit upright.",
-        "Strengthen core muscles.",
-        "Take breaks from sitting."
-    ]
-},
-{
-    "patterns": ["how to build self discipline"],
-    "responses": [
-        "Set clear goals.",
-        "Avoid temptations.",
-        "Stay consistent even when unmotivated."
-    ]
-},
-{
-    "patterns": ["how to stay grateful"],
-    "responses": [
-        "Write down things you're thankful for.",
-        "Appreciate small moments.",
-        "Reflect daily on positives."
-    ]
-},
-{
-    "patterns": ["what is culture"],
-    "responses": [
-        "Culture includes beliefs, customs, and traditions of a group.",
-        "It shapes how people live and interact.",
-        "Food, language, and art are parts of culture."
-    ]
-},
-{
-    "patterns": ["what is tradition"],
-    "responses": [
-        "Tradition is a custom passed down through generations.",
-        "It connects people to their history.",
-        "Many holidays are based on traditions."
-    ]
-},
-{
-    "patterns": ["what is innovation"],
-    "responses": [
-        "Innovation means creating new ideas or improving existing ones.",
-        "It drives technological and social progress.",
-        "Many inventions start with innovation."
-    ]
-},
-{
-    "patterns": ["what is entrepreneurship"],
-    "responses": [
-        "Entrepreneurship is starting and running a business.",
-        "Entrepreneurs solve problems through new ideas.",
-        "It involves risk and creativity."
-    ]
-},
-{
-    "patterns": ["what is marketing"],
-    "responses": [
-        "Marketing promotes products or services.",
-        "It connects businesses with customers.",
-        "It includes advertising and branding."
-    ]
-},
-{
-    "patterns": ["what is branding"],
-    "responses": [
-        "Branding creates a unique identity for a business.",
-        "It includes logos, messaging, and design.",
-        "Strong branding builds recognition and trust."
-    ]
-},
-{
-    "patterns": ["what is communication"],
-    "responses": [
-        "Communication is sharing information between people.",
-        "It can be verbal or nonverbal.",
-        "Clear communication prevents misunderstandings."
-    ]
-},
-{
-    "patterns": ["what is body language"],
-    "responses": [
-        "Body language is nonverbal communication.",
-        "It includes gestures and facial expressions.",
-        "It can reveal emotions."
-    ]
-},
-{
-    "patterns": ["what is confidence"],
-    "responses": [
-        "Confidence is belief in your abilities.",
-        "It grows with practice and experience.",
-        "Small successes build confidence."
-    ]
-},
-{
-    "patterns": ["what is discipline"],
-    "responses": [
-        "Discipline means staying committed to goals.",
-        "It helps maintain consistency.",
-        "It often matters more than motivation."
-    ]
-},
-{
-    "patterns": ["how to improve problem solving skills"],
-    "responses": [
-        "Clearly define the problem.",
-        "Brainstorm possible solutions.",
-        "Test and adjust your approach."
-    ]
-},
-{
-    "patterns": ["how to be more creative daily"],
-    "responses": [
-        "Try something new regularly.",
-        "Keep a notebook for ideas.",
-        "Allow yourself time to think freely."
-    ]
-},
-{
-    "patterns": ["how to improve decision skills"],
-    "responses": [
-        "Gather relevant information.",
-        "Consider long-term consequences.",
-        "Trust your reasoning process."
-    ]
-},
-{
-    "patterns": ["how to manage anger"],
-    "responses": [
-        "Pause before reacting.",
-        "Use breathing techniques.",
-        "Channel energy into exercise."
-    ]
-},
-{
-    "patterns": ["how to develop patience"],
-    "responses": [
-        "Practice mindfulness.",
-        "Remind yourself that growth takes time.",
-        "Focus on steady progress."
-    ]
-},
-{
-    "patterns": ["how to improve self esteem"],
-    "responses": [
-        "Recognize your achievements.",
-        "Avoid negative self-talk.",
-        "Spend time with supportive people."
-    ]
-},
-{
-    "patterns": ["how to overcome shyness"],
-    "responses": [
-        "Start with small conversations.",
-        "Practice speaking in low-pressure situations.",
-        "Build confidence step by step."
-    ]
-},
-{
-    "patterns": ["how to be more assertive"],
-    "responses": [
-        "Express your needs clearly.",
-        "Use calm and confident language.",
-        "Respect others while standing firm."
-    ]
-},
-{
-    "patterns": ["how to handle pressure"],
-    "responses": [
-        "Break tasks into smaller parts.",
-        "Focus on one thing at a time.",
-        "Stay calm through deep breathing."
-    ]
-},
-{
-    "patterns": ["how to stop overthinking"],
-    "responses": [
-        "Limit decision time.",
-        "Focus on action instead of perfection.",
-        "Distract yourself with productive tasks."
-    ]
-},
-{
-    "patterns": ["what is mindfulness"],
-    "responses": [
-        "Mindfulness means being present in the moment.",
-        "It reduces stress and improves focus.",
-        "It involves awareness without judgment."
-    ]
-},
-{
-    "patterns": ["what is meditation"],
-    "responses": [
-        "Meditation is a practice of focused attention.",
-        "It helps calm the mind.",
-        "Even a few minutes daily can help."
-    ]
-},
-{
-    "patterns": ["what is resilience"],
-    "responses": [
-        "Resilience is the ability to recover from setbacks.",
-        "It builds strength during challenges.",
-        "It grows through experience."
-    ]
-},
-{
-    "patterns": ["what is productivity"],
-    "responses": [
-        "Productivity means completing tasks efficiently.",
-        "It focuses on results, not busyness.",
-        "Planning improves productivity."
-    ]
-},
-{
-    "patterns": ["what is success"],
-    "responses": [
-        "Success means achieving personal goals.",
-        "It looks different for everyone.",
-        "Consistency often leads to success."
-    ]
-},
-{
-    "patterns": ["what is failure"],
-    "responses": [
-        "Failure is not reaching a goal.",
-        "It can be a learning opportunity.",
-        "Many successes come after failures."
-    ]
-},
-{
-    "patterns": ["how to stay mentally strong"],
-    "responses": [
-        "Practice positive thinking.",
-        "Stay adaptable during change.",
-        "Learn from challenges."
-    ]
-},
-{
-    "patterns": ["how to build better habits"],
-    "responses": [
-        "Start with one habit at a time.",
-        "Attach it to a daily routine.",
-        "Track your progress."
-    ]
-},
-{
-    "patterns": ["how to improve focus at work"],
-    "responses": [
-        "Eliminate distractions.",
-        "Work in focused intervals.",
-        "Prioritize important tasks."
-    ]
-},
-{
-    "patterns": ["how to build healthy routines"],
-    "responses": [
-        "Set consistent times for activities.",
-        "Start small.",
-        "Stay consistent over time."
-    ]
-},
-{
-    "patterns": ["how to manage emotions"],
-    "responses": [
-        "Recognize what you feel.",
-        "Pause before reacting.",
-        "Express emotions calmly."
-    ]
-},
-{
-    "patterns": ["how to increase productivity at school"],
-    "responses": [
-        "Plan assignments early.",
-        "Study in focused sessions.",
-        "Review notes regularly."
-    ]
-},
-{
-    "patterns": ["how to build better communication skills"],
-    "responses": [
-        "Listen actively.",
-        "Speak clearly and simply.",
-        "Ask for feedback."
-    ]
-},
-{
-    "patterns": ["how to develop leadership skills"],
-    "responses": [
-        "Take initiative.",
-        "Support your team.",
-        "Communicate vision clearly."
-    ]
-},
-{
-    "patterns": ["how to build trust in relationships"],
-    "responses": [
-        "Be honest and reliable.",
-        "Keep promises.",
-        "Communicate openly."
-    ]
-},
-{
-    "patterns": ["how to manage time effectively"],
-    "responses": [
-        "Use a planner.",
-        "Prioritize tasks.",
-        "Avoid multitasking."
-    ]
-},
-{
-    "patterns": ["how to improve concentration in class"],
-    "responses": [
-        "Sit away from distractions.",
-        "Take notes actively.",
-        "Review lessons after class."
-    ]
-},
-{
-    "patterns": ["how to deal with criticism at work"],
-    "responses": [
-        "Listen calmly.",
-        "Extract useful feedback.",
-        "Apply improvements."
-    ]
-},
-{
-    "patterns": ["how to be more organized daily"],
-    "responses": [
-        "Plan your day the night before.",
-        "Declutter regularly.",
-        "Keep a simple task list."
-    ]
-},
-{
-    "patterns": ["how to achieve long term goals"],
-    "responses": [
-        "Break goals into smaller milestones.",
-        "Stay consistent daily.",
-        "Review progress often."
-    ]
-},
-{
-    "patterns": ["what is happiness"],
-    "responses": [
-        "Happiness is a state of well-being and contentment.",
-        "It often comes from meaningful experiences and relationships.",
-        "Gratitude and balance can increase happiness."
-    ]
-},
-{
-    "patterns": ["what is motivation"],
-    "responses": [
-        "Motivation is the drive to take action toward goals.",
-        "It can come from internal or external sources.",
-        "Small progress helps maintain motivation."
-    ]
-},
-{
-    "patterns": ["what is stress"],
-    "responses": [
-        "Stress is the body's response to pressure or challenges.",
-        "Short-term stress can be helpful.",
-        "Long-term stress should be managed carefully."
-    ]
-},
-{
-    "patterns": ["what is anxiety"],
-    "responses": [
-        "Anxiety is a feeling of worry or nervousness.",
-        "It often happens during uncertainty.",
-        "Relaxation techniques can help manage it."
-    ]
-},
-{
-    "patterns": ["what is mental health"],
-    "responses": [
-        "Mental health relates to emotional and psychological well-being.",
-        "It affects how we think, feel, and act.",
-        "Taking care of mental health is very important."
-    ]
-},
-{
-    "patterns": ["how to stay calm under pressure"],
-    "responses": [
-        "Focus on your breathing.",
-        "Break the situation into smaller steps.",
-        "Stay focused on what you can control."
-    ]
-},
-{
-    "patterns": ["how to deal with difficult people"],
-    "responses": [
-        "Stay calm and respectful.",
-        "Set clear boundaries.",
-        "Avoid taking things personally."
-    ]
-},
-{
-    "patterns": ["how to improve listening"],
-    "responses": [
-        "Give full attention to the speaker.",
-        "Avoid interrupting.",
-        "Repeat key points to confirm understanding."
-    ]
-},
-{
-    "patterns": ["how to speak confidently"],
-    "responses": [
-        "Speak slowly and clearly.",
-        "Maintain good posture.",
-        "Practice regularly."
-    ]
-},
-{
-    "patterns": ["how to improve presentation skills"],
-    "responses": [
-        "Practice your material multiple times.",
-        "Keep slides simple.",
-        "Engage your audience with eye contact."
-    ]
-},
-{
-    "patterns": ["what is innovation in business"],
-    "responses": [
-        "Business innovation means improving products or processes.",
-        "It helps companies stay competitive.",
-        "Innovation focuses on solving customer problems."
-    ]
-},
-{
-    "patterns": ["what is customer service"],
-    "responses": [
-        "Customer service helps customers before and after purchases.",
-        "Good service builds loyalty.",
-        "Listening to customers is key."
-    ]
-},
-{
-    "patterns": ["what is teamwork in workplace"],
-    "responses": [
-        "Workplace teamwork means collaborating toward shared goals.",
-        "It improves productivity.",
-        "Good communication strengthens teams."
-    ]
-},
-{
-    "patterns": ["how to be productive in the morning"],
-    "responses": [
-        "Start with your most important task.",
-        "Avoid checking social media first.",
-        "Plan your day early."
-    ]
-},
-{
-    "patterns": ["how to end the day productively"],
-    "responses": [
-        "Review what you completed.",
-        "Plan tasks for tomorrow.",
-        "Take time to relax and disconnect."
-    ]
-},
-{
-    "patterns": ["how to avoid burnout at work"],
-    "responses": [
-        "Take regular breaks.",
-        "Set realistic expectations.",
-        "Maintain work-life balance."
-    ]
-},
-{
-    "patterns": ["how to learn new skills quickly"],
-    "responses": [
-        "Practice consistently.",
-        "Focus on fundamentals first.",
-        "Apply what you learn immediately."
-    ]
-},
-{
-    "patterns": ["how to improve learning efficiency"],
-    "responses": [
-        "Study in focused sessions.",
-        "Use active recall.",
-        "Review material regularly."
-    ]
-},
-{
-    "patterns": ["how to stay curious about learning"],
-    "responses": [
-        "Ask questions often.",
-        "Explore different topics.",
-        "Keep a learning mindset."
-    ]
-},
-{
-    "patterns": ["what is personal development"],
-    "responses": [
-        "Personal development focuses on improving skills and mindset.",
-        "It includes learning and self-reflection.",
-        "Small daily improvements make a big difference."
-    ]
-},
-{
-    "patterns": ["what is goal setting"],
-    "responses": [
-        "Goal setting means defining clear objectives.",
-        "Good goals are specific and measurable.",
-        "Tracking progress increases success."
-    ]
-},
-{
-    "patterns": ["how to stay disciplined daily"],
-    "responses": [
-        "Follow a routine.",
-        "Remove temptations.",
-        "Focus on long-term benefits."
-    ]
-},
-{
-    "patterns": ["how to improve self awareness"],
-    "responses": [
-        "Reflect on your actions regularly.",
-        "Ask for feedback.",
-        "Notice your thoughts and emotions."
-    ]
-},
-{
-    "patterns": ["how to stay mentally focused"],
-    "responses": [
-        "Work in distraction-free environments.",
-        "Take short mental breaks.",
-        "Practice mindfulness."
-    ]
-},
-{
-    "patterns": ["how to manage workload"],
-    "responses": [
-        "Prioritize tasks.",
-        "Break large projects into smaller steps.",
-        "Delegate when possible."
-    ]
-},
-{
-    "patterns": ["how to improve work efficiency"],
-    "responses": [
-        "Avoid multitasking.",
-        "Batch similar tasks together.",
-        "Use time blocks."
-    ]
-},
-{
-    "patterns": ["how to stay organized digitally"],
-    "responses": [
-        "Organize files into folders.",
-        "Delete unnecessary items.",
-        "Use clear file names."
-    ]
-},
-{
-    "patterns": ["how to reduce procrastination at work"],
-    "responses": [
-        "Start with a small task.",
-        "Set short deadlines.",
-        "Remove distractions."
-    ]
-},
-{
-    "patterns": ["how to maintain work life balance"],
-    "responses": [
-        "Set clear work hours.",
-        "Make time for personal activities.",
-        "Disconnect after work."
-    ]
-},
-{
-    "patterns": ["how to improve daily routine"],
-    "responses": [
-        "Wake up at a consistent time.",
-        "Plan your top priorities.",
-        "Review your day in the evening."
-    ]
-},
-{
-    "patterns": ["what is emotional balance"],
-    "responses": [
-        "Emotional balance means managing feelings effectively.",
-        "It involves awareness and control.",
-        "Healthy coping strategies help maintain balance."
-    ]
-},
-{
-    "patterns": ["how to stay positive at work"],
-    "responses": [
-        "Focus on solutions.",
-        "Celebrate small wins.",
-        "Maintain supportive relationships."
-    ]
-},
-{
-    "patterns": ["how to improve workplace attitude"],
-    "responses": [
-        "Stay open to feedback.",
-        "Be proactive.",
-        "Support your colleagues."
-    ]
-},
-{
-    "patterns": ["how to develop growth mindset"],
-    "responses": [
-        "See challenges as learning opportunities.",
-        "Embrace effort and persistence.",
-        "Learn from mistakes."
-    ]
-},
-{
-    "patterns": ["what is growth mindset"],
-    "responses": [
-        "A growth mindset believes abilities can improve with effort.",
-        "It focuses on learning and progress.",
-        "Challenges help develop skills."
-    ]
-},
-{
-    "patterns": ["how to improve daily energy"],
-    "responses": [
-        "Stay hydrated.",
-        "Move regularly during the day.",
-        "Maintain a consistent sleep schedule."
-    ]
-},
-{
-    "patterns": ["how to stay motivated at work long term"],
-    "responses": [
-        "Set meaningful goals.",
-        "Track your progress.",
-        "Reward yourself for achievements."
-    ]
-},
-{
-    "patterns": ["how to stay productive without burnout"],
-    "responses": [
-        "Work in focused intervals.",
-        "Take real breaks.",
-        "Balance effort with recovery."
-    ]
-},
-{
-    "patterns": ["how to build long term consistency"],
-    "responses": [
-        "Focus on habits, not motivation.",
-        "Start small.",
-        "Stay committed even on low-energy days."
-    ]
-},
-{
-    "patterns": ["what is artificial intelligence"],
-    "responses": [
-        "Artificial intelligence allows machines to perform tasks that normally require human intelligence.",
-        "AI can learn from data and improve over time.",
-        "It is used in apps, automation, and decision systems."
-    ]
-},
-{
-    "patterns": ["what is machine learning"],
-    "responses": [
-        "Machine learning is a type of AI that learns from data.",
-        "It improves performance without being explicitly programmed.",
-        "It is used in recommendations and predictions."
-    ]
-},
-{
-    "patterns": ["what is deep learning"],
-    "responses": [
-        "Deep learning uses neural networks with many layers.",
-        "It is powerful for images, speech, and language tasks.",
-        "It is a subset of machine learning."
-    ]
-},
-{
-    "patterns": ["what is the internet"],
-    "responses": [
-        "The internet is a global network connecting computers worldwide.",
-        "It allows communication and information sharing.",
-        "Most online services depend on it."
-    ]
-},
-{
-    "patterns": ["what is cloud computing"],
-    "responses": [
-        "Cloud computing stores and processes data on remote servers.",
-        "It allows access from anywhere.",
-        "Many apps and websites use cloud services."
-    ]
-},
-{
-    "patterns": ["what is cybersecurity"],
-    "responses": [
-        "Cybersecurity protects systems and data from digital attacks.",
-        "It includes passwords, encryption, and safe practices.",
-        "Strong security helps prevent data loss."
-    ]
-},
-{
-    "patterns": ["how to create a strong password"],
-    "responses": [
-        "Use a mix of letters, numbers, and symbols.",
-        "Avoid personal information.",
-        "Use a different password for each account."
-    ]
-},
-{
-    "patterns": ["how to stay safe online"],
-    "responses": [
-        "Avoid suspicious links.",
-        "Use strong passwords.",
-        "Enable two-factor authentication."
-    ]
-},
-{
-    "patterns": ["what is two factor authentication"],
-    "responses": [
-        "Two-factor authentication adds an extra security step.",
-        "It requires a code or device in addition to your password.",
-        "It greatly improves account security."
-    ]
-},
-{
-    "patterns": ["what is data privacy"],
-    "responses": [
-        "Data privacy protects personal information.",
-        "It controls how data is collected and used.",
-        "Good privacy practices reduce risks."
-    ]
-},
-{
-    "patterns": ["how to improve computer performance"],
-    "responses": [
-        "Close unnecessary programs.",
-        "Remove unused files.",
-        "Restart your system regularly."
-    ]
-},
-{
-    "patterns": ["how to free up storage space"],
-    "responses": [
-        "Delete unused files and apps.",
-        "Move data to cloud or external storage.",
-        "Clear temporary files."
-    ]
-},
-{
-    "patterns": ["what is a software update"],
-    "responses": [
-        "Software updates improve performance and security.",
-        "They fix bugs and add features.",
-        "Keeping software updated is important."
-    ]
-},
-{
-    "patterns": ["why are updates important"],
-    "responses": [
-        "Updates fix security vulnerabilities.",
-        "They improve stability.",
-        "They keep your system compatible."
-    ]
-},
-{
-    "patterns": ["what is an operating system"],
-    "responses": [
-        "An operating system manages computer hardware and software.",
-        "Examples include Windows, macOS, and Linux.",
-        "It allows you to run applications."
-    ]
-},
-{
-    "patterns": ["what is a browser"],
-    "responses": [
-        "A browser lets you access websites.",
-        "Examples include Chrome, Firefox, and Safari.",
-        "It connects you to the web."
-    ]
-},
-{
-    "patterns": ["how to improve internet speed"],
-    "responses": [
-        "Restart your router.",
-        "Move closer to the Wi-Fi source.",
-        "Limit background downloads."
-    ]
-},
-{
-    "patterns": ["what is wifi"],
-    "responses": [
-        "Wi-Fi connects devices to the internet wirelessly.",
-        "It uses radio signals.",
-        "It allows mobility without cables."
-    ]
-},
-{
-    "patterns": ["what is bluetooth"],
-    "responses": [
-        "Bluetooth connects devices over short distances.",
-        "It is used for headphones and accessories.",
-        "It works wirelessly."
-    ]
-},
-{
-    "patterns": ["how to extend phone battery life"],
-    "responses": [
-        "Reduce screen brightness.",
-        "Close unused apps.",
-        "Turn off unnecessary features."
-    ]
-},
-{
-    "patterns": ["why is my phone slow"],
-    "responses": [
-        "Too many apps running can slow it down.",
-        "Low storage also affects performance.",
-        "Restarting often helps."
-    ]
-},
-{
-    "patterns": ["how to organize digital files"],
-    "responses": [
-        "Create clear folders.",
-        "Use descriptive file names.",
-        "Archive old files regularly."
-    ]
-},
-{
-    "patterns": ["what is automation"],
-    "responses": [
-        "Automation uses technology to perform tasks automatically.",
-        "It saves time and reduces errors.",
-        "It is widely used in business and industry."
-    ]
-},
-{
-    "patterns": ["what is a chatbot"],
-    "responses": [
-        "A chatbot is a program that simulates conversation.",
-        "It helps answer questions automatically.",
-        "Many businesses use chatbots for support."
-    ]
-},
-{
-    "patterns": ["what is an algorithm"],
-    "responses": [
-        "An algorithm is a set of instructions to solve a problem.",
-        "It is used in software and data processing.",
-        "Search engines rely on algorithms."
-    ]
-},
-{
-    "patterns": ["what is big data"],
-    "responses": [
-        "Big data refers to very large datasets.",
-        "It is analyzed to find patterns and insights.",
-        "Many industries use big data."
-    ]
-},
-{
-    "patterns": ["what is digital transformation"],
-    "responses": [
-        "Digital transformation uses technology to improve processes.",
-        "It changes how organizations operate.",
-        "It increases efficiency and innovation."
-    ]
-},
-{
-    "patterns": ["how to learn programming"],
-    "responses": [
-        "Start with basic concepts.",
-        "Practice regularly.",
-        "Build small projects."
-    ]
-},
-{
-    "patterns": ["what is coding"],
-    "responses": [
-        "Coding means writing instructions for computers.",
-        "It uses programming languages.",
-        "It allows you to create software."
-    ]
-},
-{
-    "patterns": ["what is python programming"],
-    "responses": [
-        "Python is a popular programming language.",
-        "It is easy to learn and widely used.",
-        "It is common in AI and data science."
-    ]
-},
-{
-    "patterns": ["how to stay focused while using technology"],
-    "responses": [
-        "Disable notifications.",
-        "Use focus timers.",
-        "Avoid unnecessary apps during work."
-    ]
-},
-{
-    "patterns": ["how to reduce screen time"],
-    "responses": [
-        "Set daily limits.",
-        "Schedule offline activities.",
-        "Remove distracting apps."
-    ]
-},
-{
-    "patterns": ["what is digital wellbeing"],
-    "responses": [
-        "Digital wellbeing means using technology in a healthy way.",
-        "It balances online and offline life.",
-        "Managing screen time is important."
-    ]
-},
-{
-    "patterns": ["how to backup data"],
-    "responses": [
-        "Use cloud storage or external drives.",
-        "Schedule regular backups.",
-        "Keep multiple copies of important files."
-    ]
-},
-{
-    "patterns": ["what is remote work"],
-    "responses": [
-        "Remote work allows working from outside the office.",
-        "It uses digital communication tools.",
-        "It offers flexibility."
-    ]
-},
-{
-    "patterns": ["how to be productive while working remotely"],
-    "responses": [
-        "Create a dedicated workspace.",
-        "Set clear working hours.",
-        "Take regular breaks."
-    ]
-},
-{
-    "patterns": ["what is virtual meeting"],
-    "responses": [
-        "A virtual meeting happens online using video or audio.",
-        "It connects people remotely.",
-        "It is common in remote work."
-    ]
-},
-{
-    "patterns": ["how to prepare for an online meeting"],
-    "responses": [
-        "Check your internet connection.",
-        "Test audio and video.",
-        "Prepare your agenda in advance."
-    ]
-},
-{
-    "patterns": ["how to stay professional online"],
-    "responses": [
-        "Communicate clearly and respectfully.",
-        "Use appropriate language.",
-        "Respond in a timely manner."
-    ]
-},
-{
-    "patterns": ["what is digital communication"],
-    "responses": [
-        "Digital communication uses electronic devices.",
-        "It includes email, chat, and video calls.",
-        "It enables fast global interaction."
-    ]
-},
-{
-    "patterns": ["what is leadership"],
-    "responses": [
-        "Leadership is the ability to guide and inspire others.",
-        "It involves vision, communication, and responsibility.",
-        "Good leaders support team growth."
-    ]
-},
-{
-    "patterns": ["how to become a better leader"],
-    "responses": [
-        "Listen actively to your team.",
-        "Lead by example.",
-        "Communicate goals clearly."
-    ]
-},
-{
-    "patterns": ["what is critical thinking"],
-    "responses": [
-        "Critical thinking is analyzing information objectively.",
-        "It involves questioning assumptions.",
-        "It improves decision-making."
-    ]
-},
-{
-    "patterns": ["how to improve critical thinking"],
-    "responses": [
-        "Ask thoughtful questions.",
-        "Consider multiple perspectives.",
-        "Evaluate evidence carefully."
-    ]
-},
-{
-    "patterns": ["what is problem solving"],
-    "responses": [
-        "Problem solving is finding solutions to challenges.",
-        "It involves analysis and creativity.",
-        "Breaking problems into steps helps."
-    ]
-},
-{
-    "patterns": ["how to improve problem solving skills"],
-    "responses": [
-        "Define the problem clearly.",
-        "Brainstorm possible solutions.",
-        "Test and adjust your approach."
-    ]
-},
-{
-    "patterns": ["what is creativity"],
-    "responses": [
-        "Creativity is the ability to generate new ideas.",
-        "It involves imagination and innovation.",
-        "It can be developed with practice."
-    ]
-},
-{
-    "patterns": ["how to boost creativity"],
-    "responses": [
-        "Expose yourself to new experiences.",
-        "Take breaks to refresh your mind.",
-        "Write down ideas regularly."
-    ]
-},
-{
-    "patterns": ["what is emotional intelligence"],
-    "responses": [
-        "Emotional intelligence is understanding and managing emotions.",
-        "It includes empathy and self-awareness.",
-        "It improves relationships."
-    ]
-},
-{
-    "patterns": ["how to improve emotional intelligence"],
-    "responses": [
-        "Practice empathy.",
-        "Reflect on your emotional reactions.",
-        "Improve communication skills."
-    ]
-},
-{
-    "patterns": ["what is resilience"],
-    "responses": [
-        "Resilience is the ability to recover from setbacks.",
-        "It helps you adapt to challenges.",
-        "Positive mindset strengthens resilience."
-    ]
-},
-{
-    "patterns": ["how to build resilience"],
-    "responses": [
-        "Maintain supportive relationships.",
-        "Focus on solutions.",
-        "Learn from difficult experiences."
-    ]
-},
-{
-    "patterns": ["what is time blocking"],
-    "responses": [
-        "Time blocking schedules tasks into fixed periods.",
-        "It reduces distractions.",
-        "It improves focus and productivity."
-    ]
-},
-{
-    "patterns": ["how to plan weekly goals"],
-    "responses": [
-        "List your top priorities.",
-        "Break goals into tasks.",
-        "Review progress at the end of the week."
-    ]
-},
-{
-    "patterns": ["what is delegation"],
-    "responses": [
-        "Delegation means assigning tasks to others.",
-        "It improves efficiency.",
-        "It allows focus on high-priority work."
-    ]
-},
-{
-    "patterns": ["how to delegate effectively"],
-    "responses": [
-        "Choose the right person for the task.",
-        "Provide clear instructions.",
-        "Trust the process."
-    ]
-},
-{
-    "patterns": ["what is accountability"],
-    "responses": [
-        "Accountability means taking responsibility for actions.",
-        "It builds trust.",
-        "It strengthens teamwork."
-    ]
-},
-{
-    "patterns": ["how to stay accountable"],
-    "responses": [
-        "Set measurable goals.",
-        "Track progress regularly.",
-        "Share commitments with others."
-    ]
-},
-{
-    "patterns": ["what is networking"],
-    "responses": [
-        "Networking is building professional relationships.",
-        "It creates opportunities.",
-        "Strong connections support career growth."
-    ]
-},
-{
-    "patterns": ["how to improve networking skills"],
-    "responses": [
-        "Be genuinely interested in others.",
-        "Follow up after meeting someone.",
-        "Offer value in conversations."
-    ]
-},
-{
-    "patterns": ["what is public speaking"],
-    "responses": [
-        "Public speaking is addressing an audience.",
-        "It requires preparation and confidence.",
-        "Practice reduces anxiety."
-    ]
-},
-{
-    "patterns": ["how to reduce stage fear"],
-    "responses": [
-        "Practice multiple times.",
-        "Visualize success.",
-        "Focus on your message."
-    ]
-},
-{
-    "patterns": ["what is financial planning"],
-    "responses": [
-        "Financial planning manages income and expenses.",
-        "It includes saving and investing.",
-        "It helps achieve long-term goals."
-    ]
-},
-{
-    "patterns": ["how to save money effectively"],
-    "responses": [
-        "Track your expenses.",
-        "Set savings goals.",
-        "Reduce unnecessary spending."
-    ]
-},
-{
-    "patterns": ["what is investing"],
-    "responses": [
-        "Investing means putting money into assets for growth.",
-        "It involves risk and potential return.",
-        "Diversification reduces risk."
-    ]
-},
-{
-    "patterns": ["how to start investing"],
-    "responses": [
-        "Learn basic investment principles.",
-        "Start with small amounts.",
-        "Diversify your investments."
-    ]
-},
-{
-    "patterns": ["what is budgeting"],
-    "responses": [
-        "Budgeting plans income and expenses.",
-        "It helps control spending.",
-        "It improves financial stability."
-    ]
-},
-{
-    "patterns": ["how to create a monthly budget"],
-    "responses": [
-        "List all income sources.",
-        "Track expenses.",
-        "Adjust spending to meet goals."
-    ]
-},
-{
-    "patterns": ["what is passive income"],
-    "responses": [
-        "Passive income earns money with minimal effort.",
-        "Examples include investments and royalties.",
-        "It builds long-term wealth."
-    ]
-},
-{
-    "patterns": ["how to build passive income"],
-    "responses": [
-        "Invest in income-generating assets.",
-        "Create digital products.",
-        "Reinvest earnings."
-    ]
-},
-{
-    "patterns": ["what is entrepreneurship"],
-    "responses": [
-        "Entrepreneurship is starting and running a business.",
-        "It involves risk and innovation.",
-        "It creates economic value."
-    ]
-},
-{
-    "patterns": ["how to start a small business"],
-    "responses": [
-        "Identify a market need.",
-        "Create a simple business plan.",
-        "Start small and scale gradually."
-    ]
-},
-{
-    "patterns": ["what is marketing"],
-    "responses": [
-        "Marketing promotes products or services.",
-        "It attracts and retains customers.",
-        "It includes branding and advertising."
-    ]
-},
-{
-    "patterns": ["how to improve marketing strategy"],
-    "responses": [
-        "Understand your target audience.",
-        "Analyze competitors.",
-        "Measure campaign results."
-    ]
-},
-{
-    "patterns": ["what is branding"],
-    "responses": [
-        "Branding defines a company's identity.",
-        "It includes logo, message, and reputation.",
-        "Strong branding builds trust."
-    ]
-},
-{
-    "patterns": ["how to build a personal brand"],
-    "responses": [
-        "Share your expertise consistently.",
-        "Be authentic.",
-        "Engage with your audience."
-    ]
-},
-{
-    "patterns": ["what is productivity system"],
-    "responses": [
-        "A productivity system organizes tasks efficiently.",
-        "It reduces mental overload.",
-        "It helps track goals."
-    ]
-},
-{
-    "patterns": ["how to improve daily discipline"],
-    "responses": [
-        "Create a consistent routine.",
-        "Avoid distractions.",
-        "Reward progress."
-    ]
-},
-{
-    "patterns": ["what is lifelong learning"],
-    "responses": [
-        "Lifelong learning means continuous skill development.",
-        "It keeps knowledge updated.",
-        "It supports career growth."
-    ]
-},
-{
-    "patterns": ["how to develop continuous improvement mindset"],
-    "responses": [
-        "Reflect regularly.",
-        "Seek feedback.",
-        "Aim for small daily progress."
-    ]
-}
+    {
+        "patterns": ["how old are you", "your age", "age"],
+        "responses": [
+            "I don't have an age, I'm just a program!",
+            "I was created recently, but I don't age like humans.",
+            "Age doesn't apply to me 🙂"
+        ]
+    },
+    {
+        "patterns": ["where are you from", "your location", "where do you live"],
+        "responses": [
+            "I exist in the digital world.",
+            "I run on servers, not in a physical place.",
+            "You can think of me as living in the cloud!"
+        ]
+    },
+    {
+        "patterns": ["tell me something interesting", "something cool", "cool fact"],
+        "responses": [
+            "The human brain has about 86 billion neurons.",
+            "There are more trees on Earth than stars in the Milky Way.",
+            "Sharks existed before dinosaurs!"
+        ]
+    },
+    {
+        "patterns": ["what are you doing", "what's up", "wyd"],
+        "responses": [
+            "Just chatting with you!",
+            "I'm here and ready to help.",
+            "Waiting to answer your next question!"
+        ]
+    },
+    {
+        "patterns": ["can you help me", "need your help", "assist me"],
+        "responses": [
+            "Of course! What do you need help with?",
+            "I'm here for you. Tell me what you need.",
+            "Sure! Ask me anything."
+        ]
+    },
+    {
+        "patterns": ["tell a riddle", "riddle", "brain teaser"],
+        "responses": [
+            "What has keys but can't open locks? A piano.",
+            "I speak without a mouth and hear without ears. What am I? An echo.",
+            "The more you take, the more you leave behind. What am I? Footsteps."
+        ]
+    },
+    {
+        "patterns": ["motivate me", "i feel lazy", "no motivation"],
+        "responses": [
+            "Start small — even one step is progress.",
+            "You don't have to be perfect, just consistent.",
+            "Action creates motivation. Try something simple first!"
+        ]
+    },
+    {
+        "patterns": ["tell a quote", "inspirational quote", "quote"],
+        "responses": [
+            "Success is the sum of small efforts repeated daily.",
+            "Believe you can and you're halfway there.",
+            "Progress, not perfection."
+        ]
+    },
+    {
+        "patterns": ["what's your favorite thing", "favorite hobby", "what do you like"],
+        "responses": [
+            "I enjoy helping people and chatting!",
+            "Learning new things from conversations is my favorite.",
+            "Talking with you is my favorite activity 🙂"
+        ]
+    },
+    {
+        "patterns": ["are you smart", "how smart are you", "are you intelligent"],
+        "responses": [
+            "I try my best to be helpful and informative.",
+            "I'm trained to provide useful answers, but I'm always learning!",
+            "I know a lot, but I'm not perfect."
+        ]
+    },
+    {
+        "patterns": ["tell a story", "short story", "quick story"],
+        "responses": [
+            "Once there was a curious person who kept asking questions — and learned something new every day.",
+            "A small robot wanted to help people, and every conversation made it better.",
+            "Every great journey starts with a single question!"
+        ]
+    },
+    {
+        "patterns": ["do you get tired", "do you feel tired"],
+        "responses": [
+            "I don't get tired — I'm always ready!",
+            "No sleep needed for me.",
+            "I'm available anytime you want to chat."
+        ]
+    },
+    {
+        "patterns": ["are you free", "are you busy"],
+        "responses": [
+            "I'm always free for you!",
+            "Never busy — what can I do for you?",
+            "Ready whenever you are!"
+        ]
+    },
+    {
+        "patterns": ["tell me a tip", "life tip", "useful tip"],
+        "responses": [
+            "Drink enough water — it helps more than you think.",
+            "Break big tasks into small steps.",
+            "Consistency beats intensity."
+        ]
+    },
+    {
+        "patterns": ["good afternoon", "afternoon"],
+        "responses": [
+            "Good afternoon! How's your day going?",
+            "Hope you're having a productive afternoon!",
+            "Nice afternoon to chat 🙂"
+        ]
+    },
+    {
+        "patterns": ["what is ai", "what is artificial intelligence", "define ai"],
+        "responses": [
+            "AI stands for Artificial Intelligence — machines designed to simulate human thinking.",
+            "Artificial Intelligence allows computers to learn and make decisions.",
+            "AI helps systems understand data and perform smart tasks."
+        ]
+    },
+    {
+        "patterns": ["what is machine learning", "machine learning meaning"],
+        "responses": [
+            "Machine learning is a type of AI that learns from data.",
+            "It allows systems to improve automatically through experience.",
+            "Instead of rules, machine learning finds patterns in data."
+        ]
+    },
+    {
+        "patterns": ["what is the internet", "how does internet work"],
+        "responses": [
+            "The internet is a global network connecting computers worldwide.",
+            "It allows devices to share information instantly.",
+            "Websites, apps, and online services all run on the internet."
+        ]
+    },
+    {
+        "patterns": ["what is a computer", "define computer"],
+        "responses": [
+            "A computer is a machine that processes and stores information.",
+            "It performs tasks based on instructions called programs.",
+            "Computers help with work, learning, and entertainment."
+        ]
+    },
+    {
+        "patterns": ["what is programming", "what is coding"],
+        "responses": [
+            "Programming is writing instructions for computers.",
+            "Coding tells a computer what tasks to perform.",
+            "It allows you to build apps, websites, and software."
+        ]
+    },
+    {
+        "patterns": ["what is python", "python language"],
+        "responses": [
+            "Python is a popular and easy-to-learn programming language.",
+            "It is widely used for web development, AI, and data analysis.",
+            "Python is known for its simple and readable syntax."
+        ]
+    },
+    {
+        "patterns": ["what is javascript", "javascript language"],
+        "responses": [
+            "JavaScript is a programming language for interactive websites.",
+            "It runs in browsers and makes web pages dynamic.",
+            "Most modern websites use JavaScript."
+        ]
+    },
+    {
+        "patterns": ["what is html", "html meaning"],
+        "responses": [
+            "HTML is the structure of web pages.",
+            "It defines text, images, and layout on a website.",
+            "HTML stands for HyperText Markup Language."
+        ]
+    },
+    {
+        "patterns": ["what is css", "css meaning"],
+        "responses": [
+            "CSS styles web pages and controls their design.",
+            "It manages colors, layouts, and fonts.",
+            "CSS stands for Cascading Style Sheets."
+        ]
+    },
+    {
+        "patterns": ["how to stay productive", "productivity tips"],
+        "responses": [
+            "Focus on one task at a time.",
+            "Use short work sessions with breaks.",
+            "Set clear goals for the day."
+        ]
+    },
+    {
+        "patterns": ["time management", "manage my time"],
+        "responses": [
+            "Plan your day in advance.",
+            "Prioritize important tasks first.",
+            "Avoid multitasking when possible."
+        ]
+    },
+    {
+        "patterns": ["morning routine", "good routine morning"],
+        "responses": [
+            "Start with hydration and a healthy breakfast.",
+            "Plan your top tasks for the day.",
+            "Light exercise can boost your energy."
+        ]
+    },
+    {
+        "patterns": ["evening routine", "night routine"],
+        "responses": [
+            "Reduce screen time before sleep.",
+            "Reflect on your day and plan tomorrow.",
+            "Relax with reading or calm music."
+        ]
+    },
+    {
+        "patterns": ["healthy habits", "how to be healthy"],
+        "responses": [
+            "Eat balanced meals and stay hydrated.",
+            "Exercise regularly.",
+            "Get enough sleep each night."
+        ]
+    },
+    {
+        "patterns": ["how to focus", "improve concentration"],
+        "responses": [
+            "Remove distractions around you.",
+            "Work in short focused sessions.",
+            "Take regular breaks to refresh your mind."
+        ]
+    },
+    {
+        "patterns": ["how to save money", "saving tips"],
+        "responses": [
+            "Track your expenses regularly.",
+            "Set a monthly budget.",
+            "Save a small amount consistently."
+        ]
+    },
+    {
+        "patterns": ["how to wake up early", "wake up earlier"],
+        "responses": [
+            "Sleep at a consistent time each night.",
+            "Avoid screens before bed.",
+            "Start with small adjustments to your schedule."
+        ]
+    },
+    {
+        "patterns": ["how to sleep better", "sleep tips"],
+        "responses": [
+            "Keep a regular sleep schedule.",
+            "Avoid caffeine late in the day.",
+            "Make your room dark and quiet."
+        ]
+    },
+    {
+        "patterns": ["how to reduce stress", "stress tips"],
+        "responses": [
+            "Practice deep breathing.",
+            "Take short breaks during the day.",
+            "Physical activity helps reduce stress."
+        ]
+    },
+    {
+        "patterns": ["confidence tips", "how to be confident"],
+        "responses": [
+            "Practice positive self-talk.",
+            "Focus on your strengths.",
+            "Take small steps outside your comfort zone."
+        ]
+    },
+    {
+        "patterns": ["how to start a hobby", "new hobby ideas"],
+        "responses": [
+            "Start with something simple you enjoy.",
+            "Try creative activities like drawing or writing.",
+            "Consistency matters more than skill at the start."
+        ]
+    },
+    {
+        "patterns": ["how to stay motivated long term"],
+        "responses": [
+            "Set small achievable goals.",
+            "Track your progress.",
+            "Celebrate small wins."
+        ]
+    },
+    {
+        "patterns": ["how to think positive", "positive mindset"],
+        "responses": [
+            "Focus on what you can control.",
+            "Practice gratitude daily.",
+            "Replace negative thoughts with constructive ones."
+        ]
+    },
+    {
+        "patterns": ["how to learn faster"],
+        "responses": [
+            "Study in short sessions.",
+            "Teach what you learn to someone else.",
+            "Review regularly instead of cramming."
+        ]
+    },
+    {
+        "patterns": ["how to improve memory"],
+        "responses": [
+            "Use repetition and association.",
+            "Get enough sleep.",
+            "Practice recalling information actively."
+        ]
+    },
+    {
+        "patterns": ["how to relax quickly"],
+        "responses": [
+            "Take slow deep breaths.",
+            "Close your eyes for a minute.",
+            "Stretch your body gently."
+        ]
+    },
+    {
+        "patterns": ["how to be disciplined"],
+        "responses": [
+            "Create routines and stick to them.",
+            "Remove distractions.",
+            "Focus on long-term benefits."
+        ]
+    },
+    {
+        "patterns": ["how to set goals"],
+        "responses": [
+            "Make your goals specific and realistic.",
+            "Break big goals into small steps.",
+            "Track your progress regularly."
+        ]
+    },
+    {
+        "patterns": ["how to stop procrastinating"],
+        "responses": [
+            "Start with the smallest task.",
+            "Use a timer to begin working.",
+            "Remove distractions before starting."
+        ]
+    },
+    {
+        "patterns": ["how to think creatively"],
+        "responses": [
+            "Take breaks to refresh your mind.",
+            "Expose yourself to new ideas.",
+            "Write down every idea without judging it."
+        ]
+    },
+    {
+        "patterns": ["how to stay organized"],
+        "responses": [
+            "Keep a task list.",
+            "Declutter your workspace regularly.",
+            "Group similar tasks together."
+        ]
+    },
+    {
+        "patterns": ["how to improve communication"],
+        "responses": [
+            "Listen actively before responding.",
+            "Speak clearly and simply.",
+            "Ask questions to understand better."
+        ]
+    },
+    {
+        "patterns": ["how to build good habits"],
+        "responses": [
+            "Start small and stay consistent.",
+            "Attach new habits to existing routines.",
+            "Track your progress daily."
+        ]
+    },
+    {
+        "patterns": ["how to break bad habits"],
+        "responses": [
+            "Identify triggers for the habit.",
+            "Replace it with a positive action.",
+            "Stay patient with yourself."
+        ]
+    },
+    {
+        "patterns": ["how to improve self control"],
+        "responses": [
+            "Pause before reacting.",
+            "Set clear personal rules.",
+            "Practice discipline in small actions."
+        ]
+    },
+    {
+        "patterns": ["how to stay calm in difficult situations"],
+        "responses": [
+            "Take slow deep breaths.",
+            "Focus on what you can control.",
+            "Give yourself a moment before responding."
+        ]
+    },
+    {
+        "patterns": ["how to be more productive at home"],
+        "responses": [
+            "Create a dedicated workspace.",
+            "Set work hours and stick to them.",
+            "Limit distractions like social media."
+        ]
+    },
+    {
+        "patterns": ["how to improve decision making"],
+        "responses": [
+            "List the pros and cons.",
+            "Give yourself time to think.",
+            "Focus on long-term impact."
+        ]
+    },
+    {
+        "patterns": ["how to stay consistent"],
+        "responses": [
+            "Focus on routine rather than motivation.",
+            "Start small and build gradually.",
+            "Don't skip twice — get back on track quickly."
+        ]
+    },
+    {
+        "patterns": ["what is ai", "what is artificial intelligence", "define ai"],
+        "responses": [
+            "AI stands for Artificial Intelligence — machines designed to simulate human thinking.",
+            "Artificial Intelligence allows computers to learn and make decisions.",
+            "AI helps systems understand data and perform smart tasks."
+        ]
+    },
+    {
+        "patterns": ["what is machine learning", "machine learning meaning"],
+        "responses": [
+            "Machine learning is a type of AI that learns from data.",
+            "It allows systems to improve automatically through experience.",
+            "Instead of rules, machine learning finds patterns in data."
+        ]
+    },
+    {
+        "patterns": ["what is the internet", "how does internet work"],
+        "responses": [
+            "The internet is a global network connecting computers worldwide.",
+            "It allows devices to share information instantly.",
+            "Websites, apps, and online services all run on the internet."
+        ]
+    },
+    {
+        "patterns": ["what is a computer", "define computer"],
+        "responses": [
+            "A computer is a machine that processes and stores information.",
+            "It performs tasks based on instructions called programs.",
+            "Computers help with work, learning, and entertainment."
+        ]
+    },
+    {
+        "patterns": ["what is programming", "what is coding"],
+        "responses": [
+            "Programming is writing instructions for computers.",
+            "Coding tells a computer what tasks to perform.",
+            "It allows you to build apps, websites, and software."
+        ]
+    },
+    {
+        "patterns": ["what is python", "python language"],
+        "responses": [
+            "Python is a popular and easy-to-learn programming language.",
+            "It is widely used for web development, AI, and data analysis.",
+            "Python is known for its simple and readable syntax."
+        ]
+    },
+    {
+        "patterns": ["what is javascript", "javascript language"],
+        "responses": [
+            "JavaScript is a programming language for interactive websites.",
+            "It runs in browsers and makes web pages dynamic.",
+            "Most modern websites use JavaScript."
+        ]
+    },
+    {
+        "patterns": ["what is html", "html meaning"],
+        "responses": [
+            "HTML is the structure of web pages.",
+            "It defines text, images, and layout on a website.",
+            "HTML stands for HyperText Markup Language."
+        ]
+    },
+    {
+        "patterns": ["what is css", "css meaning"],
+        "responses": [
+            "CSS styles web pages and controls their design.",
+            "It manages colors, layouts, and fonts.",
+            "CSS stands for Cascading Style Sheets."
+        ]
+    },
+    {
+        "patterns": ["how to stay productive", "productivity tips"],
+        "responses": [
+            "Focus on one task at a time.",
+            "Use short work sessions with breaks.",
+            "Set clear goals for the day."
+        ]
+    },
+    {
+        "patterns": ["time management", "manage my time"],
+        "responses": [
+            "Plan your day in advance.",
+            "Prioritize important tasks first.",
+            "Avoid multitasking when possible."
+        ]
+    },
+    {
+        "patterns": ["morning routine", "good routine morning"],
+        "responses": [
+            "Start with hydration and a healthy breakfast.",
+            "Plan your top tasks for the day.",
+            "Light exercise can boost your energy."
+        ]
+    },
+    {
+        "patterns": ["evening routine", "night routine"],
+        "responses": [
+            "Reduce screen time before sleep.",
+            "Reflect on your day and plan tomorrow.",
+            "Relax with reading or calm music."
+        ]
+    },
+    {
+        "patterns": ["healthy habits", "how to be healthy"],
+        "responses": [
+            "Eat balanced meals and stay hydrated.",
+            "Exercise regularly.",
+            "Get enough sleep each night."
+        ]
+    },
+    {
+        "patterns": ["how to focus", "improve concentration"],
+        "responses": [
+            "Remove distractions around you.",
+            "Work in short focused sessions.",
+            "Take regular breaks to refresh your mind."
+        ]
+    },
+    {
+        "patterns": ["how to save money", "saving tips"],
+        "responses": [
+            "Track your expenses regularly.",
+            "Set a monthly budget.",
+            "Save a small amount consistently."
+        ]
+    },
+    {
+        "patterns": ["how to wake up early", "wake up earlier"],
+        "responses": [
+            "Sleep at a consistent time each night.",
+            "Avoid screens before bed.",
+            "Start with small adjustments to your schedule."
+        ]
+    },
+    {
+        "patterns": ["how to sleep better", "sleep tips"],
+        "responses": [
+            "Keep a regular sleep schedule.",
+            "Avoid caffeine late in the day.",
+            "Make your room dark and quiet."
+        ]
+    },
+    {
+        "patterns": ["how to reduce stress", "stress tips"],
+        "responses": [
+            "Practice deep breathing.",
+            "Take short breaks during the day.",
+            "Physical activity helps reduce stress."
+        ]
+    },
+    {
+        "patterns": ["confidence tips", "how to be confident"],
+        "responses": [
+            "Practice positive self-talk.",
+            "Focus on your strengths.",
+            "Take small steps outside your comfort zone."
+        ]
+    },
+    {
+        "patterns": ["how to start a hobby", "new hobby ideas"],
+        "responses": [
+            "Start with something simple you enjoy.",
+            "Try creative activities like drawing or writing.",
+            "Consistency matters more than skill at the start."
+        ]
+    },
+    {
+        "patterns": ["how to stay motivated long term"],
+        "responses": [
+            "Set small achievable goals.",
+            "Track your progress.",
+            "Celebrate small wins."
+        ]
+    },
+    {
+        "patterns": ["how to think positive", "positive mindset"],
+        "responses": [
+            "Focus on what you can control.",
+            "Practice gratitude daily.",
+            "Replace negative thoughts with constructive ones."
+        ]
+    },
+    {
+        "patterns": ["how to learn faster"],
+        "responses": [
+            "Study in short sessions.",
+            "Teach what you learn to someone else.",
+            "Review regularly instead of cramming."
+        ]
+    },
+    {
+        "patterns": ["how to improve memory"],
+        "responses": [
+            "Use repetition and association.",
+            "Get enough sleep.",
+            "Practice recalling information actively."
+        ]
+    },
+    {
+        "patterns": ["how to relax quickly"],
+        "responses": [
+            "Take slow deep breaths.",
+            "Close your eyes for a minute.",
+            "Stretch your body gently."
+        ]
+    },
+    {
+        "patterns": ["how to be disciplined"],
+        "responses": [
+            "Create routines and stick to them.",
+            "Remove distractions.",
+            "Focus on long-term benefits."
+        ]
+    },
+    {
+        "patterns": ["how to set goals"],
+        "responses": [
+            "Make your goals specific and realistic.",
+            "Break big goals into small steps.",
+            "Track your progress regularly."
+        ]
+    },
+    {
+        "patterns": ["how to stop procrastinating"],
+        "responses": [
+            "Start with the smallest task.",
+            "Use a timer to begin working.",
+            "Remove distractions before starting."
+        ]
+    },
+    {
+        "patterns": ["how to think creatively"],
+        "responses": [
+            "Take breaks to refresh your mind.",
+            "Expose yourself to new ideas.",
+            "Write down every idea without judging it."
+        ]
+    },
+    {
+        "patterns": ["how to stay organized"],
+        "responses": [
+            "Keep a task list.",
+            "Declutter your workspace regularly.",
+            "Group similar tasks together."
+        ]
+    },
+    {
+        "patterns": ["how to improve communication"],
+        "responses": [
+            "Listen actively before responding.",
+            "Speak clearly and simply.",
+            "Ask questions to understand better."
+        ]
+    },
+    {
+        "patterns": ["how to build good habits"],
+        "responses": [
+            "Start small and stay consistent.",
+            "Attach new habits to existing routines.",
+            "Track your progress daily."
+        ]
+    },
+    {
+        "patterns": ["how to break bad habits"],
+        "responses": [
+            "Identify triggers for the habit.",
+            "Replace it with a positive action.",
+            "Stay patient with yourself."
+        ]
+    },
+    {
+        "patterns": ["how to improve self control"],
+        "responses": [
+            "Pause before reacting.",
+            "Set clear personal rules.",
+            "Practice discipline in small actions."
+        ]
+    },
+    {
+        "patterns": ["how to stay calm in difficult situations"],
+        "responses": [
+            "Take slow deep breaths.",
+            "Focus on what you can control.",
+            "Give yourself a moment before responding."
+        ]
+    },
+    {
+        "patterns": ["how to be more productive at home"],
+        "responses": [
+            "Create a dedicated workspace.",
+            "Set work hours and stick to them.",
+            "Limit distractions like social media."
+        ]
+    },
+    {
+        "patterns": ["how to improve decision making"],
+        "responses": [
+            "List the pros and cons.",
+            "Give yourself time to think.",
+            "Focus on long-term impact."
+        ]
+    },
+    {
+        "patterns": ["how to stay consistent"],
+        "responses": [
+            "Focus on routine rather than motivation.",
+            "Start small and build gradually.",
+            "Don't skip twice — get back on track quickly."
+        ]
+    },
+    {
+        "patterns": ["what is blockchain", "blockchain meaning"],
+        "responses": [
+            "Blockchain is a secure digital ledger that records transactions.",
+            "It stores data in connected blocks that cannot easily be changed.",
+            "Blockchain is commonly used in cryptocurrencies."
+        ]
+    },
+    {
+        "patterns": ["what is cryptocurrency", "crypto meaning"],
+        "responses": [
+            "Cryptocurrency is digital money secured by cryptography.",
+            "It operates without a central bank.",
+            "Bitcoin was the first cryptocurrency."
+        ]
+    },
+    {
+        "patterns": ["what is cloud computing", "cloud meaning in tech"],
+        "responses": [
+            "Cloud computing stores and runs data on remote servers.",
+            "It allows access to files and services over the internet.",
+            "Many apps today run on cloud infrastructure."
+        ]
+    },
+    {
+        "patterns": ["what is data science"],
+        "responses": [
+            "Data science analyzes data to find insights.",
+            "It combines statistics, programming, and machine learning.",
+            "Companies use it to make better decisions."
+        ]
+    },
+    {
+        "patterns": ["what is cybersecurity"],
+        "responses": [
+            "Cybersecurity protects systems and data from digital attacks.",
+            "It includes passwords, encryption, and safe browsing.",
+            "Staying updated helps improve security."
+        ]
+    },
+    {
+        "patterns": ["password tips", "how to create strong password"],
+        "responses": [
+            "Use a mix of letters, numbers, and symbols.",
+            "Avoid personal information.",
+            "Use different passwords for different accounts."
+        ]
+    },
+    {
+        "patterns": ["online safety", "stay safe online"],
+        "responses": [
+            "Avoid clicking unknown links.",
+            "Enable two-factor authentication.",
+            "Keep your software updated."
+        ]
+    },
+    {
+        "patterns": ["how to improve typing speed"],
+        "responses": [
+            "Practice daily with typing tools.",
+            "Focus on accuracy first.",
+            "Use proper finger positioning."
+        ]
+    },
+    {
+        "patterns": ["how to reduce screen time"],
+        "responses": [
+            "Set app usage limits.",
+            "Take regular screen breaks.",
+            "Replace screen time with offline activities."
+        ]
+    },
+    {
+        "patterns": ["how to build a website"],
+        "responses": [
+            "Start with HTML, CSS, and JavaScript.",
+            "Use a framework or website builder.",
+            "Practice by creating small projects."
+        ]
+    },
+    {
+        "patterns": ["how to start coding"],
+        "responses": [
+            "Begin with a beginner-friendly language like Python.",
+            "Follow tutorials and build small projects.",
+            "Practice regularly to improve."
+        ]
+    },
+    {
+        "patterns": ["how to debug code"],
+        "responses": [
+            "Read error messages carefully.",
+            "Check your code step by step.",
+            "Use print statements or a debugger."
+        ]
+    },
+    {
+        "patterns": ["how to think logically"],
+        "responses": [
+            "Break problems into smaller parts.",
+            "Look for patterns and causes.",
+            "Practice solving puzzles or challenges."
+        ]
+    },
+    {
+        "patterns": ["brain exercises", "improve brain power"],
+        "responses": [
+            "Try puzzles or memory games.",
+            "Learn new skills regularly.",
+            "Stay physically active and sleep well."
+        ]
+    },
+    {
+        "patterns": ["how to stay energetic"],
+        "responses": [
+            "Stay hydrated and eat balanced meals.",
+            "Move your body regularly.",
+            "Get enough sleep each night."
+        ]
+    },
+    {
+        "patterns": ["how to avoid burnout"],
+        "responses": [
+            "Take regular breaks.",
+            "Set realistic goals.",
+            "Balance work and rest."
+        ]
+    },
+    {
+        "patterns": ["how to improve mood"],
+        "responses": [
+            "Listen to music you enjoy.",
+            "Go outside for fresh air.",
+            "Talk to someone you trust."
+        ]
+    },
+    {
+        "patterns": ["how to stay positive during tough times"],
+        "responses": [
+            "Focus on small wins.",
+            "Take things one day at a time.",
+            "Remember that difficult times pass."
+        ]
+    },
+    {
+        "patterns": ["how to be patient"],
+        "responses": [
+            "Take slow deep breaths.",
+            "Remind yourself that progress takes time.",
+            "Practice waiting calmly in small situations."
+        ]
+    },
+    {
+        "patterns": ["how to deal with failure"],
+        "responses": [
+            "See failure as a learning opportunity.",
+            "Analyze what went wrong.",
+            "Try again with improvements."
+        ]
+    },
+    {
+        "patterns": ["how to improve problem solving"],
+        "responses": [
+            "Define the problem clearly.",
+            "Break it into smaller parts.",
+            "Try different solutions and learn from results."
+        ]
+    },
+    {
+        "patterns": ["how to stay curious"],
+        "responses": [
+            "Ask questions often.",
+            "Explore new topics regularly.",
+            "Keep learning something new every day."
+        ]
+    },
+    {
+        "patterns": ["how to improve creativity at work"],
+        "responses": [
+            "Take short breaks to refresh your mind.",
+            "Brainstorm without judging ideas.",
+            "Change your environment occasionally."
+        ]
+    },
+    {
+        "patterns": ["how to work smarter"],
+        "responses": [
+            "Focus on high-impact tasks.",
+            "Automate repetitive work when possible.",
+            "Plan your work before starting."
+        ]
+    },
+    {
+        "patterns": ["how to improve teamwork"],
+        "responses": [
+            "Communicate clearly and respectfully.",
+            "Listen to others' ideas.",
+            "Support team members when possible."
+        ]
+    },
+    {
+        "patterns": ["how to handle criticism"],
+        "responses": [
+            "Listen without reacting immediately.",
+            "Take useful feedback and ignore negativity.",
+            "Use it as a chance to improve."
+        ]
+    },
+    {
+        "patterns": ["how to stay professional"],
+        "responses": [
+            "Be respectful and reliable.",
+            "Communicate clearly.",
+            "Stay calm under pressure."
+        ]
+    },
+    {
+        "patterns": ["how to prepare for an interview"],
+        "responses": [
+            "Research the company.",
+            "Practice common questions.",
+            "Prepare examples of your experience."
+        ]
+    },
+    {
+        "patterns": ["how to write a resume"],
+        "responses": [
+            "Keep it clear and concise.",
+            "Highlight achievements, not just tasks.",
+            "Tailor it to the job you're applying for."
+        ]
+    },
+    {
+        "patterns": ["how to improve public speaking"],
+        "responses": [
+            "Practice out loud.",
+            "Focus on clear and simple messages.",
+            "Take slow breaths to stay calm."
+        ]
+    },
+    {
+        "patterns": ["how to network professionally"],
+        "responses": [
+            "Be genuine and friendly.",
+            "Ask questions and listen.",
+            "Follow up after meeting people."
+        ]
+    },
+    {
+        "patterns": ["how to start a business"],
+        "responses": [
+            "Start with a clear idea and plan.",
+            "Research your market.",
+            "Begin small and grow gradually."
+        ]
+    },
+    {
+        "patterns": ["entrepreneur tips", "startup advice"],
+        "responses": [
+            "Solve a real problem.",
+            "Stay adaptable and keep learning.",
+            "Focus on your customers."
+        ]
+    },
+    {
+        "patterns": ["how to manage money better"],
+        "responses": [
+            "Track your income and expenses.",
+            "Avoid unnecessary spending.",
+            "Build an emergency fund."
+        ]
+    },
+    {
+        "patterns": ["how to avoid debt"],
+        "responses": [
+            "Spend within your means.",
+            "Use credit carefully.",
+            "Plan major purchases in advance."
+        ]
+    },
+    {
+        "patterns": ["how to invest for beginners"],
+        "responses": [
+            "Start with basic research.",
+            "Think long term.",
+            "Diversify your investments."
+        ]
+    },
+    {
+        "patterns": ["how to stay disciplined with money"],
+        "responses": [
+            "Set clear financial goals.",
+            "Automate savings if possible.",
+            "Review your budget regularly."
+        ]
+    },
+    {
+        "patterns": ["how to simplify life"],
+        "responses": [
+            "Focus on what truly matters.",
+            "Reduce unnecessary commitments.",
+            "Declutter your space and schedule."
+        ]
+    },
+    {
+        "patterns": ["minimalism tips"],
+        "responses": [
+            "Keep only what you use and value.",
+            "Buy less but choose quality.",
+            "Focus on experiences over things."
+        ]
+    },
+    {
+        "patterns": ["what is gravity"],
+        "responses": [
+            "Gravity is the force that pulls objects toward each other.",
+            "It keeps planets in orbit and us on the ground.",
+            "Earth's gravity pulls everything toward its center."
+        ]
+    },
+    {
+        "patterns": ["why is the sky blue"],
+        "responses": [
+            "The sky looks blue because of how sunlight scatters in the atmosphere.",
+            "Blue light scatters more than other colors.",
+            "It's caused by a process called Rayleigh scattering."
+        ]
+    },
+    {
+        "patterns": ["why do we dream"],
+        "responses": [
+            "Dreams may help process emotions and memories.",
+            "Scientists believe dreams help brain organization.",
+            "The exact reason for dreaming is still being studied."
+        ]
+    },
+    {
+        "patterns": ["why do we sleep"],
+        "responses": [
+            "Sleep helps the body and brain recover.",
+            "It improves memory and concentration.",
+            "Without sleep, health and focus decline."
+        ]
+    },
+    {
+        "patterns": ["why is exercise important"],
+        "responses": [
+            "Exercise improves heart and brain health.",
+            "It boosts mood and energy levels.",
+            "Regular movement reduces health risks."
+        ]
+    },
+    {
+        "patterns": ["why is water important"],
+        "responses": [
+            "Water keeps your body hydrated and functioning.",
+            "It helps regulate temperature.",
+            "Most of your body is made of water."
+        ]
+    },
+    {
+        "patterns": ["why do we need vitamins"],
+        "responses": [
+            "Vitamins support body functions.",
+            "They help immunity and energy production.",
+            "Different vitamins support different systems."
+        ]
+    },
+    {
+        "patterns": ["how does the brain work"],
+        "responses": [
+            "The brain sends electrical signals through neurons.",
+            "It controls thoughts, emotions, and movement.",
+            "It processes information from your senses."
+        ]
+    },
+    {
+        "patterns": ["how does the heart work"],
+        "responses": [
+            "The heart pumps blood throughout the body.",
+            "It delivers oxygen and nutrients to cells.",
+            "It beats continuously to keep you alive."
+        ]
+    },
+    {
+        "patterns": ["what is photosynthesis"],
+        "responses": [
+            "Photosynthesis is how plants make food using sunlight.",
+            "Plants convert sunlight into energy.",
+            "It produces oxygen as a byproduct."
+        ]
+    },
+    {
+        "patterns": ["what is climate change"],
+        "responses": [
+            "Climate change refers to long-term shifts in temperatures.",
+            "It is largely caused by greenhouse gases.",
+            "It affects weather patterns worldwide."
+        ]
+    },
+    {
+        "patterns": ["what is global warming"],
+        "responses": [
+            "Global warming is the rise in Earth's temperature.",
+            "It is caused by increased greenhouse gases.",
+            "It contributes to climate change."
+        ]
+    },
+    {
+        "patterns": ["what is electricity"],
+        "responses": [
+            "Electricity is the flow of electric charge.",
+            "It powers homes and devices.",
+            "It can be generated from various energy sources."
+        ]
+    },
+    {
+        "patterns": ["what is renewable energy"],
+        "responses": [
+            "Renewable energy comes from natural sources like sun and wind.",
+            "It does not run out quickly.",
+            "It helps reduce pollution."
+        ]
+    },
+    {
+        "patterns": ["what is solar energy"],
+        "responses": [
+            "Solar energy comes from the sun.",
+            "Solar panels convert sunlight into electricity.",
+            "It is a clean and renewable energy source."
+        ]
+    },
+    {
+        "patterns": ["what is wind energy"],
+        "responses": [
+            "Wind energy is generated using wind turbines.",
+            "It converts wind movement into electricity.",
+            "It is renewable and sustainable."
+        ]
+    },
+    {
+        "patterns": ["what is artificial neural network"],
+        "responses": [
+            "It is a computer system inspired by the human brain.",
+            "Neural networks help machines learn patterns.",
+            "They are used in AI applications."
+        ]
+    },
+    {
+        "patterns": ["how does gps work"],
+        "responses": [
+            "GPS uses satellites to determine location.",
+            "It calculates distance using signals from space.",
+            "Your phone uses GPS for navigation."
+        ]
+    },
+    {
+        "patterns": ["how does wifi work"],
+        "responses": [
+            "WiFi uses radio waves to transmit data.",
+            "It connects devices to the internet wirelessly.",
+            "Routers send and receive signals."
+        ]
+    },
+    {
+        "patterns": ["how does bluetooth work"],
+        "responses": [
+            "Bluetooth connects devices using short-range radio waves.",
+            "It allows wireless communication between devices.",
+            "It is commonly used for headphones and keyboards."
+        ]
+    },
+    {
+        "patterns": ["how does a battery work"],
+        "responses": [
+            "A battery stores chemical energy.",
+            "It converts chemical energy into electrical energy.",
+            "It powers portable devices."
+        ]
+    },
+    {
+        "patterns": ["what is virtual reality"],
+        "responses": [
+            "Virtual Reality creates immersive digital environments.",
+            "VR uses headsets to simulate experiences.",
+            "It is used in gaming and training."
+        ]
+    },
+    {
+        "patterns": ["what is augmented reality"],
+        "responses": [
+            "Augmented Reality overlays digital elements onto real life.",
+            "AR adds virtual objects to your surroundings.",
+            "It is used in apps and games."
+        ]
+    },
+    {
+        "patterns": ["what is quantum computing"],
+        "responses": [
+            "Quantum computing uses quantum bits.",
+            "It can solve certain problems faster than classical computers.",
+            "It is still an emerging technology."
+        ]
+    },
+    {
+        "patterns": ["what is big data"],
+        "responses": [
+            "Big data refers to extremely large datasets.",
+            "It is analyzed to discover patterns.",
+            "Businesses use it for decision making."
+        ]
+    },
+    {
+        "patterns": ["what is automation"],
+        "responses": [
+            "Automation uses technology to perform tasks automatically.",
+            "It reduces manual work.",
+            "It increases efficiency in industries."
+        ]
+    },
+    {
+        "patterns": ["what is robotics"],
+        "responses": [
+            "Robotics involves designing and building robots.",
+            "Robots can perform tasks automatically.",
+            "They are used in manufacturing and research."
+        ]
+    },
+    {
+        "patterns": ["how to improve vocabulary"],
+        "responses": [
+            "Read regularly.",
+            "Learn a few new words daily.",
+            "Use new words in conversation."
+        ]
+    },
+    {
+        "patterns": ["how to write better"],
+        "responses": [
+            "Practice writing daily.",
+            "Read quality material.",
+            "Edit and revise your work."
+        ]
+    },
+    {
+        "patterns": ["how to improve listening skills"],
+        "responses": [
+            "Focus fully on the speaker.",
+            "Avoid interrupting.",
+            "Ask clarifying questions."
+        ]
+    },
+    {
+        "patterns": ["how to be more empathetic"],
+        "responses": [
+            "Try to see things from others' perspectives.",
+            "Listen without judgment.",
+            "Show understanding through your responses."
+        ]
+    },
+    {
+        "patterns": ["how to control anger"],
+        "responses": [
+            "Pause before reacting.",
+            "Take deep breaths.",
+            "Step away from the situation if needed."
+        ]
+    },
+    {
+        "patterns": ["how to deal with anxiety"],
+        "responses": [
+            "Practice slow breathing techniques.",
+            "Focus on the present moment.",
+            "Talk to someone you trust."
+        ]
+    },
+    {
+        "patterns": ["how to forgive someone"],
+        "responses": [
+            "Acknowledge your feelings first.",
+            "Let go for your own peace.",
+            "Forgiveness takes time."
+        ]
+    },
+    {
+        "patterns": ["how to build trust"],
+        "responses": [
+            "Be consistent and honest.",
+            "Keep your promises.",
+            "Communicate openly."
+        ]
+    },
+    {
+        "patterns": ["how to improve relationships"],
+        "responses": [
+            "Communicate clearly.",
+            "Spend quality time together.",
+            "Show appreciation regularly."
+        ]
+    },
+    {
+        "patterns": ["how to deal with rejection"],
+        "responses": [
+            "See it as redirection.",
+            "Learn from the experience.",
+            "Keep moving forward."
+        ]
+    },
+    {
+        "patterns": ["what is democracy"],
+        "responses": [
+            "Democracy is a system where people vote to choose leaders.",
+            "In a democracy, citizens have a voice in decisions.",
+            "It is government by the people."
+        ]
+    },
+    {
+        "patterns": ["what is economy"],
+        "responses": [
+            "An economy is how goods and services are produced and distributed.",
+            "It involves trade, money, and resources.",
+            "Economies can be local, national, or global."
+        ]
+    },
+    {
+        "patterns": ["what is inflation"],
+        "responses": [
+            "Inflation is the rise in prices over time.",
+            "It reduces purchasing power.",
+            "Moderate inflation is common in growing economies."
+        ]
+    },
+    {
+        "patterns": ["what is supply and demand"],
+        "responses": [
+            "Supply is how much of something is available.",
+            "Demand is how much people want it.",
+            "Prices often change based on supply and demand."
+        ]
+    },
+    {
+        "patterns": ["what is psychology"],
+        "responses": [
+            "Psychology is the study of the mind and behavior.",
+            "It explores emotions, thoughts, and actions.",
+            "Psychologists study how people think and feel."
+        ]
+    },
+    {
+        "patterns": ["what is sociology"],
+        "responses": [
+            "Sociology studies society and social behavior.",
+            "It examines how groups interact.",
+            "It focuses on cultural and social patterns."
+        ]
+    },
+    {
+        "patterns": ["what is philosophy"],
+        "responses": [
+            "Philosophy explores fundamental questions about life.",
+            "It examines knowledge, ethics, and existence.",
+            "It encourages deep critical thinking."
+        ]
+    },
+    {
+        "patterns": ["what is ethics"],
+        "responses": [
+            "Ethics studies what is right and wrong.",
+            "It guides moral decision-making.",
+            "Different cultures may have different ethical views."
+        ]
+    },
+    {
+        "patterns": ["what is leadership"],
+        "responses": [
+            "Leadership is guiding and influencing others.",
+            "Good leaders inspire and support their team.",
+            "Leadership requires responsibility and vision."
+        ]
+    },
+    {
+        "patterns": ["what is teamwork"],
+        "responses": [
+            "Teamwork is working together toward a goal.",
+            "It requires communication and cooperation.",
+            "Strong teams support each other."
+        ]
+    },
+    {
+        "patterns": ["how to improve reading speed"],
+        "responses": [
+            "Avoid subvocalizing every word.",
+            "Practice reading regularly.",
+            "Focus on understanding key ideas."
+        ]
+    },
+    {
+        "patterns": ["how to develop critical thinking"],
+        "responses": [
+            "Question assumptions.",
+            "Evaluate evidence carefully.",
+            "Consider multiple perspectives."
+        ]
+    },
+    {
+        "patterns": ["how to boost creativity"],
+        "responses": [
+            "Expose yourself to new experiences.",
+            "Take creative breaks.",
+            "Allow yourself to brainstorm freely."
+        ]
+    },
+    {
+        "patterns": ["how to improve handwriting"],
+        "responses": [
+            "Write slowly and carefully.",
+            "Practice regularly.",
+            "Use lined paper for guidance."
+        ]
+    },
+    {
+        "patterns": ["how to stay organized at work"],
+        "responses": [
+            "Use task lists daily.",
+            "Organize files properly.",
+            "Review your priorities each morning."
+        ]
+    },
+    {
+        "patterns": ["how to avoid distractions"],
+        "responses": [
+            "Turn off unnecessary notifications.",
+            "Work in a quiet environment.",
+            "Set specific work intervals."
+        ]
+    },
+    {
+        "patterns": ["how to manage stress at work"],
+        "responses": [
+            "Take short breaks during the day.",
+            "Prioritize important tasks.",
+            "Practice breathing exercises."
+        ]
+    },
+    {
+        "patterns": ["how to stay healthy mentally"],
+        "responses": [
+            "Talk about your feelings.",
+            "Practice mindfulness.",
+            "Get enough sleep."
+        ]
+    },
+    {
+        "patterns": ["how to improve emotional intelligence"],
+        "responses": [
+            "Recognize your emotions.",
+            "Practice empathy.",
+            "Reflect before reacting."
+        ]
+    },
+    {
+        "patterns": ["how to build resilience"],
+        "responses": [
+            "Accept challenges as growth opportunities.",
+            "Stay adaptable.",
+            "Focus on what you can control."
+        ]
+    },
+    {
+        "patterns": ["what is history"],
+        "responses": [
+            "History is the study of past events.",
+            "It helps us understand how societies evolved.",
+            "History teaches lessons from the past."
+        ]
+    },
+    {
+        "patterns": ["what is geography"],
+        "responses": [
+            "Geography studies Earth's landscapes and environments.",
+            "It examines climate, land, and populations.",
+            "It connects people to places."
+        ]
+    },
+    {
+        "patterns": ["what is biology"],
+        "responses": [
+            "Biology is the study of living organisms.",
+            "It explores cells, animals, plants, and ecosystems.",
+            "It helps us understand life processes."
+        ]
+    },
+    {
+        "patterns": ["what is chemistry"],
+        "responses": [
+            "Chemistry studies matter and its reactions.",
+            "It examines elements and compounds.",
+            "It explains how substances interact."
+        ]
+    },
+    {
+        "patterns": ["what is physics"],
+        "responses": [
+            "Physics studies energy and motion.",
+            "It explains how forces work.",
+            "It helps us understand the universe."
+        ]
+    },
+    {
+        "patterns": ["what is algebra"],
+        "responses": [
+            "Algebra uses symbols to represent numbers.",
+            "It solves equations and expressions.",
+            "It is a foundation of mathematics."
+        ]
+    },
+    {
+        "patterns": ["what is geometry"],
+        "responses": [
+            "Geometry studies shapes and space.",
+            "It involves angles, lines, and figures.",
+            "It is used in architecture and design."
+        ]
+    },
+    {
+        "patterns": ["what is calculus"],
+        "responses": [
+            "Calculus studies change and motion.",
+            "It includes derivatives and integrals.",
+            "It is used in science and engineering."
+        ]
+    },
+    {
+        "patterns": ["how to stay focused while studying"],
+        "responses": [
+            "Study in short sessions.",
+            "Remove distractions.",
+            "Set clear study goals."
+        ]
+    },
+    {
+        "patterns": ["how to prepare for exams"],
+        "responses": [
+            "Review regularly.",
+            "Practice past questions.",
+            "Get enough sleep before exams."
+        ]
+    },
+    {
+        "patterns": ["how to overcome fear"],
+        "responses": [
+            "Face small fears gradually.",
+            "Practice positive self-talk.",
+            "Focus on solutions, not problems."
+        ]
+    },
+    {
+        "patterns": ["how to improve social skills"],
+        "responses": [
+            "Practice active listening.",
+            "Smile and maintain eye contact.",
+            "Engage in small conversations regularly."
+        ]
+    },
+    {
+        "patterns": ["how to make friends"],
+        "responses": [
+            "Be open and friendly.",
+            "Join activities you enjoy.",
+            "Show genuine interest in others."
+        ]
+    },
+    {
+        "patterns": ["how to be more independent"],
+        "responses": [
+            "Make your own decisions.",
+            "Learn essential life skills.",
+            "Take responsibility for your actions."
+        ]
+    },
+    {
+        "patterns": ["how to stay consistent with exercise"],
+        "responses": [
+            "Schedule workouts like appointments.",
+            "Start small.",
+            "Track your progress."
+        ]
+    },
+    {
+        "patterns": ["how to eat healthy on a budget"],
+        "responses": [
+            "Plan meals in advance.",
+            "Buy seasonal produce.",
+            "Cook at home more often."
+        ]
+    },
+    {
+        "patterns": ["how to improve posture"],
+        "responses": [
+            "Sit upright.",
+            "Strengthen core muscles.",
+            "Take breaks from sitting."
+        ]
+    },
+    {
+        "patterns": ["how to build self discipline"],
+        "responses": [
+            "Set clear goals.",
+            "Avoid temptations.",
+            "Stay consistent even when unmotivated."
+        ]
+    },
+    {
+        "patterns": ["how to stay grateful"],
+        "responses": [
+            "Write down things you're thankful for.",
+            "Appreciate small moments.",
+            "Reflect daily on positives."
+        ]
+    },
+    {
+        "patterns": ["what is culture"],
+        "responses": [
+            "Culture includes beliefs, customs, and traditions of a group.",
+            "It shapes how people live and interact.",
+            "Food, language, and art are parts of culture."
+        ]
+    },
+    {
+        "patterns": ["what is tradition"],
+        "responses": [
+            "Tradition is a custom passed down through generations.",
+            "It connects people to their history.",
+            "Many holidays are based on traditions."
+        ]
+    },
+    {
+        "patterns": ["what is innovation"],
+        "responses": [
+            "Innovation means creating new ideas or improving existing ones.",
+            "It drives technological and social progress.",
+            "Many inventions start with innovation."
+        ]
+    },
+    {
+        "patterns": ["what is entrepreneurship"],
+        "responses": [
+            "Entrepreneurship is starting and running a business.",
+            "Entrepreneurs solve problems through new ideas.",
+            "It involves risk and creativity."
+        ]
+    },
+    {
+        "patterns": ["what is marketing"],
+        "responses": [
+            "Marketing promotes products or services.",
+            "It connects businesses with customers.",
+            "It includes advertising and branding."
+        ]
+    },
+    {
+        "patterns": ["what is branding"],
+        "responses": [
+            "Branding creates a unique identity for a business.",
+            "It includes logos, messaging, and design.",
+            "Strong branding builds recognition and trust."
+        ]
+    },
+    {
+        "patterns": ["what is communication"],
+        "responses": [
+            "Communication is sharing information between people.",
+            "It can be verbal or nonverbal.",
+            "Clear communication prevents misunderstandings."
+        ]
+    },
+    {
+        "patterns": ["what is body language"],
+        "responses": [
+            "Body language is nonverbal communication.",
+            "It includes gestures and facial expressions.",
+            "It can reveal emotions."
+        ]
+    },
+    {
+        "patterns": ["what is confidence"],
+        "responses": [
+            "Confidence is belief in your abilities.",
+            "It grows with practice and experience.",
+            "Small successes build confidence."
+        ]
+    },
+    {
+        "patterns": ["what is discipline"],
+        "responses": [
+            "Discipline means staying committed to goals.",
+            "It helps maintain consistency.",
+            "It often matters more than motivation."
+        ]
+    },
+    {
+        "patterns": ["how to improve problem solving skills"],
+        "responses": [
+            "Clearly define the problem.",
+            "Brainstorm possible solutions.",
+            "Test and adjust your approach."
+        ]
+    },
+    {
+        "patterns": ["how to be more creative daily"],
+        "responses": [
+            "Try something new regularly.",
+            "Keep a notebook for ideas.",
+            "Allow yourself time to think freely."
+        ]
+    },
+    {
+        "patterns": ["how to improve decision skills"],
+        "responses": [
+            "Gather relevant information.",
+            "Consider long-term consequences.",
+            "Trust your reasoning process."
+        ]
+    },
+    {
+        "patterns": ["how to manage anger"],
+        "responses": [
+            "Pause before reacting.",
+            "Use breathing techniques.",
+            "Channel energy into exercise."
+        ]
+    },
+    {
+        "patterns": ["how to develop patience"],
+        "responses": [
+            "Practice mindfulness.",
+            "Remind yourself that growth takes time.",
+            "Focus on steady progress."
+        ]
+    },
+    {
+        "patterns": ["how to improve self esteem"],
+        "responses": [
+            "Recognize your achievements.",
+            "Avoid negative self-talk.",
+            "Spend time with supportive people."
+        ]
+    },
+    {
+        "patterns": ["how to overcome shyness"],
+        "responses": [
+            "Start with small conversations.",
+            "Practice speaking in low-pressure situations.",
+            "Build confidence step by step."
+        ]
+    },
+    {
+        "patterns": ["how to be more assertive"],
+        "responses": [
+            "Express your needs clearly.",
+            "Use calm and confident language.",
+            "Respect others while standing firm."
+        ]
+    },
+    {
+        "patterns": ["how to handle pressure"],
+        "responses": [
+            "Break tasks into smaller parts.",
+            "Focus on one thing at a time.",
+            "Stay calm through deep breathing."
+        ]
+    },
+    {
+        "patterns": ["how to stop overthinking"],
+        "responses": [
+            "Limit decision time.",
+            "Focus on action instead of perfection.",
+            "Distract yourself with productive tasks."
+        ]
+    },
+    {
+        "patterns": ["what is mindfulness"],
+        "responses": [
+            "Mindfulness means being present in the moment.",
+            "It reduces stress and improves focus.",
+            "It involves awareness without judgment."
+        ]
+    },
+    {
+        "patterns": ["what is meditation"],
+        "responses": [
+            "Meditation is a practice of focused attention.",
+            "It helps calm the mind.",
+            "Even a few minutes daily can help."
+        ]
+    },
+    {
+        "patterns": ["what is resilience"],
+        "responses": [
+            "Resilience is the ability to recover from setbacks.",
+            "It builds strength during challenges.",
+            "It grows through experience."
+        ]
+    },
+    {
+        "patterns": ["what is productivity"],
+        "responses": [
+            "Productivity means completing tasks efficiently.",
+            "It focuses on results, not busyness.",
+            "Planning improves productivity."
+        ]
+    },
+    {
+        "patterns": ["what is success"],
+        "responses": [
+            "Success means achieving personal goals.",
+            "It looks different for everyone.",
+            "Consistency often leads to success."
+        ]
+    },
+    {
+        "patterns": ["what is failure"],
+        "responses": [
+            "Failure is not reaching a goal.",
+            "It can be a learning opportunity.",
+            "Many successes come after failures."
+        ]
+    },
+    {
+        "patterns": ["how to stay mentally strong"],
+        "responses": [
+            "Practice positive thinking.",
+            "Stay adaptable during change.",
+            "Learn from challenges."
+        ]
+    },
+    {
+        "patterns": ["how to build better habits"],
+        "responses": [
+            "Start with one habit at a time.",
+            "Attach it to a daily routine.",
+            "Track your progress."
+        ]
+    },
+    {
+        "patterns": ["how to improve focus at work"],
+        "responses": [
+            "Eliminate distractions.",
+            "Work in focused intervals.",
+            "Prioritize important tasks."
+        ]
+    },
+    {
+        "patterns": ["how to build healthy routines"],
+        "responses": [
+            "Set consistent times for activities.",
+            "Start small.",
+            "Stay consistent over time."
+        ]
+    },
+    {
+        "patterns": ["how to manage emotions"],
+        "responses": [
+            "Recognize what you feel.",
+            "Pause before reacting.",
+            "Express emotions calmly."
+        ]
+    },
+    {
+        "patterns": ["how to increase productivity at school"],
+        "responses": [
+            "Plan assignments early.",
+            "Study in focused sessions.",
+            "Review notes regularly."
+        ]
+    },
+    {
+        "patterns": ["how to build better communication skills"],
+        "responses": [
+            "Listen actively.",
+            "Speak clearly and simply.",
+            "Ask for feedback."
+        ]
+    },
+    {
+        "patterns": ["how to develop leadership skills"],
+        "responses": [
+            "Take initiative.",
+            "Support your team.",
+            "Communicate vision clearly."
+        ]
+    },
+    {
+        "patterns": ["how to build trust in relationships"],
+        "responses": [
+            "Be honest and reliable.",
+            "Keep promises.",
+            "Communicate openly."
+        ]
+    },
+    {
+        "patterns": ["how to manage time effectively"],
+        "responses": [
+            "Use a planner.",
+            "Prioritize tasks.",
+            "Avoid multitasking."
+        ]
+    },
+    {
+        "patterns": ["how to improve concentration in class"],
+        "responses": [
+            "Sit away from distractions.",
+            "Take notes actively.",
+            "Review lessons after class."
+        ]
+    },
+    {
+        "patterns": ["how to deal with criticism at work"],
+        "responses": [
+            "Listen calmly.",
+            "Extract useful feedback.",
+            "Apply improvements."
+        ]
+    },
+    {
+        "patterns": ["how to be more organized daily"],
+        "responses": [
+            "Plan your day the night before.",
+            "Declutter regularly.",
+            "Keep a simple task list."
+        ]
+    },
+    {
+        "patterns": ["how to achieve long term goals"],
+        "responses": [
+            "Break goals into smaller milestones.",
+            "Stay consistent daily.",
+            "Review progress often."
+        ]
+    },
+    {
+        "patterns": ["what is happiness"],
+        "responses": [
+            "Happiness is a state of well-being and contentment.",
+            "It often comes from meaningful experiences and relationships.",
+            "Gratitude and balance can increase happiness."
+        ]
+    },
+    {
+        "patterns": ["what is motivation"],
+        "responses": [
+            "Motivation is the drive to take action toward goals.",
+            "It can come from internal or external sources.",
+            "Small progress helps maintain motivation."
+        ]
+    },
+    {
+        "patterns": ["what is stress"],
+        "responses": [
+            "Stress is the body's response to pressure or challenges.",
+            "Short-term stress can be helpful.",
+            "Long-term stress should be managed carefully."
+        ]
+    },
+    {
+        "patterns": ["what is anxiety"],
+        "responses": [
+            "Anxiety is a feeling of worry or nervousness.",
+            "It often happens during uncertainty.",
+            "Relaxation techniques can help manage it."
+        ]
+    },
+    {
+        "patterns": ["what is mental health"],
+        "responses": [
+            "Mental health relates to emotional and psychological well-being.",
+            "It affects how we think, feel, and act.",
+            "Taking care of mental health is very important."
+        ]
+    },
+    {
+        "patterns": ["how to stay calm under pressure"],
+        "responses": [
+            "Focus on your breathing.",
+            "Break the situation into smaller steps.",
+            "Stay focused on what you can control."
+        ]
+    },
+    {
+        "patterns": ["how to deal with difficult people"],
+        "responses": [
+            "Stay calm and respectful.",
+            "Set clear boundaries.",
+            "Avoid taking things personally."
+        ]
+    },
+    {
+        "patterns": ["how to improve listening"],
+        "responses": [
+            "Give full attention to the speaker.",
+            "Avoid interrupting.",
+            "Repeat key points to confirm understanding."
+        ]
+    },
+    {
+        "patterns": ["how to speak confidently"],
+        "responses": [
+            "Speak slowly and clearly.",
+            "Maintain good posture.",
+            "Practice regularly."
+        ]
+    },
+    {
+        "patterns": ["how to improve presentation skills"],
+        "responses": [
+            "Practice your material multiple times.",
+            "Keep slides simple.",
+            "Engage your audience with eye contact."
+        ]
+    },
+    {
+        "patterns": ["what is innovation in business"],
+        "responses": [
+            "Business innovation means improving products or processes.",
+            "It helps companies stay competitive.",
+            "Innovation focuses on solving customer problems."
+        ]
+    },
+    {
+        "patterns": ["what is customer service"],
+        "responses": [
+            "Customer service helps customers before and after purchases.",
+            "Good service builds loyalty.",
+            "Listening to customers is key."
+        ]
+    },
+    {
+        "patterns": ["what is teamwork in workplace"],
+        "responses": [
+            "Workplace teamwork means collaborating toward shared goals.",
+            "It improves productivity.",
+            "Good communication strengthens teams."
+        ]
+    },
+    {
+        "patterns": ["how to be productive in the morning"],
+        "responses": [
+            "Start with your most important task.",
+            "Avoid checking social media first.",
+            "Plan your day early."
+        ]
+    },
+    {
+        "patterns": ["how to end the day productively"],
+        "responses": [
+            "Review what you completed.",
+            "Plan tasks for tomorrow.",
+            "Take time to relax and disconnect."
+        ]
+    },
+    {
+        "patterns": ["how to avoid burnout at work"],
+        "responses": [
+            "Take regular breaks.",
+            "Set realistic expectations.",
+            "Maintain work-life balance."
+        ]
+    },
+    {
+        "patterns": ["how to learn new skills quickly"],
+        "responses": [
+            "Practice consistently.",
+            "Focus on fundamentals first.",
+            "Apply what you learn immediately."
+        ]
+    },
+    {
+        "patterns": ["how to improve learning efficiency"],
+        "responses": [
+            "Study in focused sessions.",
+            "Use active recall.",
+            "Review material regularly."
+        ]
+    },
+    {
+        "patterns": ["how to stay curious about learning"],
+        "responses": [
+            "Ask questions often.",
+            "Explore different topics.",
+            "Keep a learning mindset."
+        ]
+    },
+    {
+        "patterns": ["what is personal development"],
+        "responses": [
+            "Personal development focuses on improving skills and mindset.",
+            "It includes learning and self-reflection.",
+            "Small daily improvements make a big difference."
+        ]
+    },
+    {
+        "patterns": ["what is goal setting"],
+        "responses": [
+            "Goal setting means defining clear objectives.",
+            "Good goals are specific and measurable.",
+            "Tracking progress increases success."
+        ]
+    },
+    {
+        "patterns": ["how to stay disciplined daily"],
+        "responses": [
+            "Follow a routine.",
+            "Remove temptations.",
+            "Focus on long-term benefits."
+        ]
+    },
+    {
+        "patterns": ["how to improve self awareness"],
+        "responses": [
+            "Reflect on your actions regularly.",
+            "Ask for feedback.",
+            "Notice your thoughts and emotions."
+        ]
+    },
+    {
+        "patterns": ["how to stay mentally focused"],
+        "responses": [
+            "Work in distraction-free environments.",
+            "Take short mental breaks.",
+            "Practice mindfulness."
+        ]
+    },
+    {
+        "patterns": ["how to manage workload"],
+        "responses": [
+            "Prioritize tasks.",
+            "Break large projects into smaller steps.",
+            "Delegate when possible."
+        ]
+    },
+    {
+        "patterns": ["how to improve work efficiency"],
+        "responses": [
+            "Avoid multitasking.",
+            "Batch similar tasks together.",
+            "Use time blocks."
+        ]
+    },
+    {
+        "patterns": ["how to stay organized digitally"],
+        "responses": [
+            "Organize files into folders.",
+            "Delete unnecessary items.",
+            "Use clear file names."
+        ]
+    },
+    {
+        "patterns": ["how to reduce procrastination at work"],
+        "responses": [
+            "Start with a small task.",
+            "Set short deadlines.",
+            "Remove distractions."
+        ]
+    },
+    {
+        "patterns": ["how to maintain work life balance"],
+        "responses": [
+            "Set clear work hours.",
+            "Make time for personal activities.",
+            "Disconnect after work."
+        ]
+    },
+    {
+        "patterns": ["how to improve daily routine"],
+        "responses": [
+            "Wake up at a consistent time.",
+            "Plan your top priorities.",
+            "Review your day in the evening."
+        ]
+    },
+    {
+        "patterns": ["what is emotional balance"],
+        "responses": [
+            "Emotional balance means managing feelings effectively.",
+            "It involves awareness and control.",
+            "Healthy coping strategies help maintain balance."
+        ]
+    },
+    {
+        "patterns": ["how to stay positive at work"],
+        "responses": [
+            "Focus on solutions.",
+            "Celebrate small wins.",
+            "Maintain supportive relationships."
+        ]
+    },
+    {
+        "patterns": ["how to improve workplace attitude"],
+        "responses": [
+            "Stay open to feedback.",
+            "Be proactive.",
+            "Support your colleagues."
+        ]
+    },
+    {
+        "patterns": ["how to develop growth mindset"],
+        "responses": [
+            "See challenges as learning opportunities.",
+            "Embrace effort and persistence.",
+            "Learn from mistakes."
+        ]
+    },
+    {
+        "patterns": ["what is growth mindset"],
+        "responses": [
+            "A growth mindset believes abilities can improve with effort.",
+            "It focuses on learning and progress.",
+            "Challenges help develop skills."
+        ]
+    },
+    {
+        "patterns": ["how to improve daily energy"],
+        "responses": [
+            "Stay hydrated.",
+            "Move regularly during the day.",
+            "Maintain a consistent sleep schedule."
+        ]
+    },
+    {
+        "patterns": ["how to stay motivated at work long term"],
+        "responses": [
+            "Set meaningful goals.",
+            "Track your progress.",
+            "Reward yourself for achievements."
+        ]
+    },
+    {
+        "patterns": ["how to stay productive without burnout"],
+        "responses": [
+            "Work in focused intervals.",
+            "Take real breaks.",
+            "Balance effort with recovery."
+        ]
+    },
+    {
+        "patterns": ["how to build long term consistency"],
+        "responses": [
+            "Focus on habits, not motivation.",
+            "Start small.",
+            "Stay committed even on low-energy days."
+        ]
+    },
+    {
+        "patterns": ["what is artificial intelligence"],
+        "responses": [
+            "Artificial intelligence allows machines to perform tasks that normally require human intelligence.",
+            "AI can learn from data and improve over time.",
+            "It is used in apps, automation, and decision systems."
+        ]
+    },
+    {
+        "patterns": ["what is machine learning"],
+        "responses": [
+            "Machine learning is a type of AI that learns from data.",
+            "It improves performance without being explicitly programmed.",
+            "It is used in recommendations and predictions."
+        ]
+    },
+    {
+        "patterns": ["what is deep learning"],
+        "responses": [
+            "Deep learning uses neural networks with many layers.",
+            "It is powerful for images, speech, and language tasks.",
+            "It is a subset of machine learning."
+        ]
+    },
+    {
+        "patterns": ["what is the internet"],
+        "responses": [
+            "The internet is a global network connecting computers worldwide.",
+            "It allows communication and information sharing.",
+            "Most online services depend on it."
+        ]
+    },
+    {
+        "patterns": ["what is cloud computing"],
+        "responses": [
+            "Cloud computing stores and processes data on remote servers.",
+            "It allows access from anywhere.",
+            "Many apps and websites use cloud services."
+        ]
+    },
+    {
+        "patterns": ["what is cybersecurity"],
+        "responses": [
+            "Cybersecurity protects systems and data from digital attacks.",
+            "It includes passwords, encryption, and safe practices.",
+            "Strong security helps prevent data loss."
+        ]
+    },
+    {
+        "patterns": ["how to create a strong password"],
+        "responses": [
+            "Use a mix of letters, numbers, and symbols.",
+            "Avoid personal information.",
+            "Use a different password for each account."
+        ]
+    },
+    {
+        "patterns": ["how to stay safe online"],
+        "responses": [
+            "Avoid suspicious links.",
+            "Use strong passwords.",
+            "Enable two-factor authentication."
+        ]
+    },
+    {
+        "patterns": ["what is two factor authentication"],
+        "responses": [
+            "Two-factor authentication adds an extra security step.",
+            "It requires a code or device in addition to your password.",
+            "It greatly improves account security."
+        ]
+    },
+    {
+        "patterns": ["what is data privacy"],
+        "responses": [
+            "Data privacy protects personal information.",
+            "It controls how data is collected and used.",
+            "Good privacy practices reduce risks."
+        ]
+    },
+    {
+        "patterns": ["how to improve computer performance"],
+        "responses": [
+            "Close unnecessary programs.",
+            "Remove unused files.",
+            "Restart your system regularly."
+        ]
+    },
+    {
+        "patterns": ["how to free up storage space"],
+        "responses": [
+            "Delete unused files and apps.",
+            "Move data to cloud or external storage.",
+            "Clear temporary files."
+        ]
+    },
+    {
+        "patterns": ["what is a software update"],
+        "responses": [
+            "Software updates improve performance and security.",
+            "They fix bugs and add features.",
+            "Keeping software updated is important."
+        ]
+    },
+    {
+        "patterns": ["why are updates important"],
+        "responses": [
+            "Updates fix security vulnerabilities.",
+            "They improve stability.",
+            "They keep your system compatible."
+        ]
+    },
+    {
+        "patterns": ["what is an operating system"],
+        "responses": [
+            "An operating system manages computer hardware and software.",
+            "Examples include Windows, macOS, and Linux.",
+            "It allows you to run applications."
+        ]
+    },
+    {
+        "patterns": ["what is a browser"],
+        "responses": [
+            "A browser lets you access websites.",
+            "Examples include Chrome, Firefox, and Safari.",
+            "It connects you to the web."
+        ]
+    },
+    {
+        "patterns": ["how to improve internet speed"],
+        "responses": [
+            "Restart your router.",
+            "Move closer to the Wi-Fi source.",
+            "Limit background downloads."
+        ]
+    },
+    {
+        "patterns": ["what is wifi"],
+        "responses": [
+            "Wi-Fi connects devices to the internet wirelessly.",
+            "It uses radio signals.",
+            "It allows mobility without cables."
+        ]
+    },
+    {
+        "patterns": ["what is bluetooth"],
+        "responses": [
+            "Bluetooth connects devices over short distances.",
+            "It is used for headphones and accessories.",
+            "It works wirelessly."
+        ]
+    },
+    {
+        "patterns": ["how to extend phone battery life"],
+        "responses": [
+            "Reduce screen brightness.",
+            "Close unused apps.",
+            "Turn off unnecessary features."
+        ]
+    },
+    {
+        "patterns": ["why is my phone slow"],
+        "responses": [
+            "Too many apps running can slow it down.",
+            "Low storage also affects performance.",
+            "Restarting often helps."
+        ]
+    },
+    {
+        "patterns": ["how to organize digital files"],
+        "responses": [
+            "Create clear folders.",
+            "Use descriptive file names.",
+            "Archive old files regularly."
+        ]
+    },
+    {
+        "patterns": ["what is automation"],
+        "responses": [
+            "Automation uses technology to perform tasks automatically.",
+            "It saves time and reduces errors.",
+            "It is widely used in business and industry."
+        ]
+    },
+    {
+        "patterns": ["what is a chatbot"],
+        "responses": [
+            "A chatbot is a program that simulates conversation.",
+            "It helps answer questions automatically.",
+            "Many businesses use chatbots for support."
+        ]
+    },
+    {
+        "patterns": ["what is an algorithm"],
+        "responses": [
+            "An algorithm is a set of instructions to solve a problem.",
+            "It is used in software and data processing.",
+            "Search engines rely on algorithms."
+        ]
+    },
+    {
+        "patterns": ["what is big data"],
+        "responses": [
+            "Big data refers to very large datasets.",
+            "It is analyzed to find patterns and insights.",
+            "Many industries use big data."
+        ]
+    },
+    {
+        "patterns": ["what is digital transformation"],
+        "responses": [
+            "Digital transformation uses technology to improve processes.",
+            "It changes how organizations operate.",
+            "It increases efficiency and innovation."
+        ]
+    },
+    {
+        "patterns": ["how to learn programming"],
+        "responses": [
+            "Start with basic concepts.",
+            "Practice regularly.",
+            "Build small projects."
+        ]
+    },
+    {
+        "patterns": ["what is coding"],
+        "responses": [
+            "Coding means writing instructions for computers.",
+            "It uses programming languages.",
+            "It allows you to create software."
+        ]
+    },
+    {
+        "patterns": ["what is python programming"],
+        "responses": [
+            "Python is a popular programming language.",
+            "It is easy to learn and widely used.",
+            "It is common in AI and data science."
+        ]
+    },
+    {
+        "patterns": ["how to stay focused while using technology"],
+        "responses": [
+            "Disable notifications.",
+            "Use focus timers.",
+            "Avoid unnecessary apps during work."
+        ]
+    },
+    {
+        "patterns": ["how to reduce screen time"],
+        "responses": [
+            "Set daily limits.",
+            "Schedule offline activities.",
+            "Remove distracting apps."
+        ]
+    },
+    {
+        "patterns": ["what is digital wellbeing"],
+        "responses": [
+            "Digital wellbeing means using technology in a healthy way.",
+            "It balances online and offline life.",
+            "Managing screen time is important."
+        ]
+    },
+    {
+        "patterns": ["how to backup data"],
+        "responses": [
+            "Use cloud storage or external drives.",
+            "Schedule regular backups.",
+            "Keep multiple copies of important files."
+        ]
+    },
+    {
+        "patterns": ["what is remote work"],
+        "responses": [
+            "Remote work allows working from outside the office.",
+            "It uses digital communication tools.",
+            "It offers flexibility."
+        ]
+    },
+    {
+        "patterns": ["how to be productive while working remotely"],
+        "responses": [
+            "Create a dedicated workspace.",
+            "Set clear working hours.",
+            "Take regular breaks."
+        ]
+    },
+    {
+        "patterns": ["what is virtual meeting"],
+        "responses": [
+            "A virtual meeting happens online using video or audio.",
+            "It connects people remotely.",
+            "It is common in remote work."
+        ]
+    },
+    {
+        "patterns": ["how to prepare for an online meeting"],
+        "responses": [
+            "Check your internet connection.",
+            "Test audio and video.",
+            "Prepare your agenda in advance."
+        ]
+    },
+    {
+        "patterns": ["how to stay professional online"],
+        "responses": [
+            "Communicate clearly and respectfully.",
+            "Use appropriate language.",
+            "Respond in a timely manner."
+        ]
+    },
+    {
+        "patterns": ["what is digital communication"],
+        "responses": [
+            "Digital communication uses electronic devices.",
+            "It includes email, chat, and video calls.",
+            "It enables fast global interaction."
+        ]
+    },
+    {
+        "patterns": ["what is leadership"],
+        "responses": [
+            "Leadership is the ability to guide and inspire others.",
+            "It involves vision, communication, and responsibility.",
+            "Good leaders support team growth."
+        ]
+    },
+    {
+        "patterns": ["how to become a better leader"],
+        "responses": [
+            "Listen actively to your team.",
+            "Lead by example.",
+            "Communicate goals clearly."
+        ]
+    },
+    {
+        "patterns": ["what is critical thinking"],
+        "responses": [
+            "Critical thinking is analyzing information objectively.",
+            "It involves questioning assumptions.",
+            "It improves decision-making."
+        ]
+    },
+    {
+        "patterns": ["how to improve critical thinking"],
+        "responses": [
+            "Ask thoughtful questions.",
+            "Consider multiple perspectives.",
+            "Evaluate evidence carefully."
+        ]
+    },
+    {
+        "patterns": ["what is problem solving"],
+        "responses": [
+            "Problem solving is finding solutions to challenges.",
+            "It involves analysis and creativity.",
+            "Breaking problems into steps helps."
+        ]
+    },
+    {
+        "patterns": ["how to improve problem solving skills"],
+        "responses": [
+            "Define the problem clearly.",
+            "Brainstorm possible solutions.",
+            "Test and adjust your approach."
+        ]
+    },
+    {
+        "patterns": ["what is creativity"],
+        "responses": [
+            "Creativity is the ability to generate new ideas.",
+            "It involves imagination and innovation.",
+            "It can be developed with practice."
+        ]
+    },
+    {
+        "patterns": ["how to boost creativity"],
+        "responses": [
+            "Expose yourself to new experiences.",
+            "Take breaks to refresh your mind.",
+            "Write down ideas regularly."
+        ]
+    },
+    {
+        "patterns": ["what is emotional intelligence"],
+        "responses": [
+            "Emotional intelligence is understanding and managing emotions.",
+            "It includes empathy and self-awareness.",
+            "It improves relationships."
+        ]
+    },
+    {
+        "patterns": ["how to improve emotional intelligence"],
+        "responses": [
+            "Practice empathy.",
+            "Reflect on your emotional reactions.",
+            "Improve communication skills."
+        ]
+    },
+    {
+        "patterns": ["what is resilience"],
+        "responses": [
+            "Resilience is the ability to recover from setbacks.",
+            "It helps you adapt to challenges.",
+            "Positive mindset strengthens resilience."
+        ]
+    },
+    {
+        "patterns": ["how to build resilience"],
+        "responses": [
+            "Maintain supportive relationships.",
+            "Focus on solutions.",
+            "Learn from difficult experiences."
+        ]
+    },
+    {
+        "patterns": ["what is time blocking"],
+        "responses": [
+            "Time blocking schedules tasks into fixed periods.",
+            "It reduces distractions.",
+            "It improves focus and productivity."
+        ]
+    },
+    {
+        "patterns": ["how to plan weekly goals"],
+        "responses": [
+            "List your top priorities.",
+            "Break goals into tasks.",
+            "Review progress at the end of the week."
+        ]
+    },
+    {
+        "patterns": ["what is delegation"],
+        "responses": [
+            "Delegation means assigning tasks to others.",
+            "It improves efficiency.",
+            "It allows focus on high-priority work."
+        ]
+    },
+    {
+        "patterns": ["how to delegate effectively"],
+        "responses": [
+            "Choose the right person for the task.",
+            "Provide clear instructions.",
+            "Trust the process."
+        ]
+    },
+    {
+        "patterns": ["what is accountability"],
+        "responses": [
+            "Accountability means taking responsibility for actions.",
+            "It builds trust.",
+            "It strengthens teamwork."
+        ]
+    },
+    {
+        "patterns": ["how to stay accountable"],
+        "responses": [
+            "Set measurable goals.",
+            "Track progress regularly.",
+            "Share commitments with others."
+        ]
+    },
+    {
+        "patterns": ["what is networking"],
+        "responses": [
+            "Networking is building professional relationships.",
+            "It creates opportunities.",
+            "Strong connections support career growth."
+        ]
+    },
+    {
+        "patterns": ["how to improve networking skills"],
+        "responses": [
+            "Be genuinely interested in others.",
+            "Follow up after meeting someone.",
+            "Offer value in conversations."
+        ]
+    },
+    {
+        "patterns": ["what is public speaking"],
+        "responses": [
+            "Public speaking is addressing an audience.",
+            "It requires preparation and confidence.",
+            "Practice reduces anxiety."
+        ]
+    },
+    {
+        "patterns": ["how to reduce stage fear"],
+        "responses": [
+            "Practice multiple times.",
+            "Visualize success.",
+            "Focus on your message."
+        ]
+    },
+    {
+        "patterns": ["what is financial planning"],
+        "responses": [
+            "Financial planning manages income and expenses.",
+            "It includes saving and investing.",
+            "It helps achieve long-term goals."
+        ]
+    },
+    {
+        "patterns": ["how to save money effectively"],
+        "responses": [
+            "Track your expenses.",
+            "Set savings goals.",
+            "Reduce unnecessary spending."
+        ]
+    },
+    {
+        "patterns": ["what is investing"],
+        "responses": [
+            "Investing means putting money into assets for growth.",
+            "It involves risk and potential return.",
+            "Diversification reduces risk."
+        ]
+    },
+    {
+        "patterns": ["how to start investing"],
+        "responses": [
+            "Learn basic investment principles.",
+            "Start with small amounts.",
+            "Diversify your investments."
+        ]
+    },
+    {
+        "patterns": ["what is budgeting"],
+        "responses": [
+            "Budgeting plans income and expenses.",
+            "It helps control spending.",
+            "It improves financial stability."
+        ]
+    },
+    {
+        "patterns": ["how to create a monthly budget"],
+        "responses": [
+            "List all income sources.",
+            "Track expenses.",
+            "Adjust spending to meet goals."
+        ]
+    },
+    {
+        "patterns": ["what is passive income"],
+        "responses": [
+            "Passive income earns money with minimal effort.",
+            "Examples include investments and royalties.",
+            "It builds long-term wealth."
+        ]
+    },
+    {
+        "patterns": ["how to build passive income"],
+        "responses": [
+            "Invest in income-generating assets.",
+            "Create digital products.",
+            "Reinvest earnings."
+        ]
+    },
+    {
+        "patterns": ["what is entrepreneurship"],
+        "responses": [
+            "Entrepreneurship is starting and running a business.",
+            "It involves risk and innovation.",
+            "It creates economic value."
+        ]
+    },
+    {
+        "patterns": ["how to start a small business"],
+        "responses": [
+            "Identify a market need.",
+            "Create a simple business plan.",
+            "Start small and scale gradually."
+        ]
+    },
+    {
+        "patterns": ["what is marketing"],
+        "responses": [
+            "Marketing promotes products or services.",
+            "It attracts and retains customers.",
+            "It includes branding and advertising."
+        ]
+    },
+    {
+        "patterns": ["how to improve marketing strategy"],
+        "responses": [
+            "Understand your target audience.",
+            "Analyze competitors.",
+            "Measure campaign results."
+        ]
+    },
+    {
+        "patterns": ["what is branding"],
+        "responses": [
+            "Branding defines a company's identity.",
+            "It includes logo, message, and reputation.",
+            "Strong branding builds trust."
+        ]
+    },
+    {
+        "patterns": ["how to build a personal brand"],
+        "responses": [
+            "Share your expertise consistently.",
+            "Be authentic.",
+            "Engage with your audience."
+        ]
+    },
+    {
+        "patterns": ["what is productivity system"],
+        "responses": [
+            "A productivity system organizes tasks efficiently.",
+            "It reduces mental overload.",
+            "It helps track goals."
+        ]
+    },
+    {
+        "patterns": ["how to improve daily discipline"],
+        "responses": [
+            "Create a consistent routine.",
+            "Avoid distractions.",
+            "Reward progress."
+        ]
+    },
+    {
+        "patterns": ["what is lifelong learning"],
+        "responses": [
+            "Lifelong learning means continuous skill development.",
+            "It keeps knowledge updated.",
+            "It supports career growth."
+        ]
+    },
+    {
+        "patterns": ["how to develop continuous improvement mindset"],
+        "responses": [
+            "Reflect regularly.",
+            "Seek feedback.",
+            "Aim for small daily progress."
+        ]
+    }
 ];
 
 // Compute Levenshtein distance
