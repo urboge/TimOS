@@ -9,42 +9,30 @@ document.addEventListener("DOMContentLoaded", function () {
     input.value = equation || "0";
   }
 
-  function appendNumber(num) {
-    if (justCalculated) {
-      equation = "";
-      justCalculated = false;
-    }
+  // Expose these globally so openCalculatorWithEquation can call them
+  window.calAppendNumber = function(num) {
+    if (justCalculated) { equation = ""; justCalculated = false; }
     equation += num;
     updateDisplay();
   }
 
-  function appendOperator(op) {
+  window.calAppendOperator = function(op) {
     if (!equation) return;
-
     const lastChar = equation.slice(-1);
-
-    if (["+", "-", "*", "/"].includes(lastChar)) {
-      equation = equation.slice(0, -1);
-    }
-
+    if (["+", "-", "*", "/"].includes(lastChar)) { equation = equation.slice(0, -1); }
     equation += op;
     justCalculated = false;
     updateDisplay();
   }
 
-  function appendDecimal() {
+  window.calAppendDecimal = function() {
     const parts = equation.split(/[\+\-\*\/]/);
     const lastNumber = parts[parts.length - 1];
-
-    if (!lastNumber.includes(".")) {
-      equation += ".";
-      updateDisplay();
-    }
+    if (!lastNumber.includes(".")) { equation += "."; updateDisplay(); }
   }
 
-  function calculate() {
+  window.calCalculate = function() {
     if (!equation) return;
-
     try {
       const result = Function("return " + equation)();
       equation = result.toString();
@@ -54,48 +42,41 @@ document.addEventListener("DOMContentLoaded", function () {
       input.value = "Error";
       return;
     }
-
     updateDisplay();
   }
 
-  function backspace() {
-    if (justCalculated) {
-      equation = "";
-      justCalculated = false;
-    } else {
-      equation = equation.slice(0, -1);
-    }
+  window.calBackspace = function() {
+    if (justCalculated) { equation = ""; justCalculated = false; }
+    else { equation = equation.slice(0, -1); }
     updateDisplay();
   }
 
-  function clearAll() {
+  window.calClearAll = function() {
     equation = "";
     justCalculated = false;
     updateDisplay();
   }
 
-  // Connect buttons
-  document.getElementById("cal-btn-zero").onclick = () => appendNumber("0");
-  document.getElementById("cal-btn-one").onclick = () => appendNumber("1");
-  document.getElementById("cal-btn-two").onclick = () => appendNumber("2");
-  document.getElementById("cal-btn-three").onclick = () => appendNumber("3");
-  document.getElementById("cal-btn-four").onclick = () => appendNumber("4");
-  document.getElementById("cal-btn-five").onclick = () => appendNumber("5");
-  document.getElementById("cal-btn-six").onclick = () => appendNumber("6");
-  document.getElementById("cal-btn-seven").onclick = () => appendNumber("7");
-  document.getElementById("cal-btn-eight").onclick = () => appendNumber("8");
-  document.getElementById("cal-btn-nine").onclick = () => appendNumber("9");
+  document.getElementById("cal-btn-zero").onclick = () => window.calAppendNumber("0");
+  document.getElementById("cal-btn-one").onclick = () => window.calAppendNumber("1");
+  document.getElementById("cal-btn-two").onclick = () => window.calAppendNumber("2");
+  document.getElementById("cal-btn-three").onclick = () => window.calAppendNumber("3");
+  document.getElementById("cal-btn-four").onclick = () => window.calAppendNumber("4");
+  document.getElementById("cal-btn-five").onclick = () => window.calAppendNumber("5");
+  document.getElementById("cal-btn-six").onclick = () => window.calAppendNumber("6");
+  document.getElementById("cal-btn-seven").onclick = () => window.calAppendNumber("7");
+  document.getElementById("cal-btn-eight").onclick = () => window.calAppendNumber("8");
+  document.getElementById("cal-btn-nine").onclick = () => window.calAppendNumber("9");
 
-  document.getElementById("cal-btn-plus").onclick = () => appendOperator("+");
-  document.getElementById("cal-btn-minus").onclick = () => appendOperator("-");
-  document.getElementById("cal-btn-multiply").onclick = () => appendOperator("*");
-  document.getElementById("cal-btn-divide").onclick = () => appendOperator("/");
+  document.getElementById("cal-btn-plus").onclick = () => window.calAppendOperator("+");
+  document.getElementById("cal-btn-minus").onclick = () => window.calAppendOperator("-");
+  document.getElementById("cal-btn-multiply").onclick = () => window.calAppendOperator("*");
+  document.getElementById("cal-btn-divide").onclick = () => window.calAppendOperator("/");
 
-  document.getElementById("cal-btn-point").onclick = appendDecimal;
-  document.getElementById("cal-btn-equal").onclick = calculate;
-  document.getElementById("cal-btn-delete").onclick = clearAll;
-  document.getElementById("cal-btn-backspace").onclick = backspace;
+  document.getElementById("cal-btn-point").onclick = window.calAppendDecimal;
+  document.getElementById("cal-btn-equal").onclick = window.calCalculate;
+  document.getElementById("cal-btn-delete").onclick = window.calClearAll;
+  document.getElementById("cal-btn-backspace").onclick = window.calBackspace;
 
   updateDisplay();
-
 });
