@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="apps/browser/browser.css">
   <link rel="stylesheet" href="apps/calculator/calculator.css">
   <link rel="stylesheet" href="apps/app_store/app_store.css">
+  <link rel="stylesheet" href="apps/files/files.css">
 
   <link rel="icon" href="images/favicon.png">
 
@@ -101,6 +102,7 @@
       <p id="calendar-icon-date" style="font-size: 30px; margin: 0; text-align: center; transition: 0.2s;">?</p>
     </div>
     <div id="terminal" class="app-icon" style="display: flex; justify-content: center; align-items: center;"><p style="color: rgb(255, 255, 255); font-size: 30px; font-weight: 900;">>_</p></div>
+    <div id="files" class="app-icon" aria-label="Files"></div>
     <div id="watch-tk" class="app-icon uninstalled"></div>
     <div id="chat-bot" class="app-icon uninstalled"></div>
   </div>
@@ -293,23 +295,25 @@
         <button class="fullscreen-window"></button>
         <p>Files</p>
       </div>
-      <div class="window-content">
-        <!-- Edit your content here -->
-        <div>
-          <img src="images/app_icons/files.png" alt="">
-          <p>file(1)</p>
+      <div class="window-content" id="files-window-content">
+        <div id="file-explorer-view">
+          <div class="file-explorer-toolbar">
+            <button id="files-new-folder-btn" type="button">＋ Folder</button>
+            <button id="files-new-text-btn" type="button">＋ Text file</button>
+            <button id="files-delete-btn" type="button" disabled>Delete</button>
+          </div>
+          <nav id="files-breadcrumbs" aria-label="Folder path"></nav>
+          <p id="files-status" role="status" aria-live="polite"></p>
+          <div id="files-list" role="list" aria-label="Files and folders"></div>
         </div>
-        <div>
-          <img src="images/app_icons/files.png" alt="">
-          <p>file(2)</p>
-        </div>
-        <div>
-          <img src="images/app_icons/files.png" alt="">
-          <p>file(3)</p>
-        </div>
-        <div>
-          <img src="images/app_icons/files.png" alt="">
-          <p>file(4)</p>
+        <div id="text-file-editor" hidden>
+          <div class="file-editor-toolbar">
+            <button id="files-back-btn" type="button">← Back</button>
+            <strong id="text-file-name"></strong>
+            <button id="files-save-btn" type="button">Save</button>
+          </div>
+          <textarea id="text-file-content" aria-label="Text file contents" spellcheck="false"></textarea>
+          <p id="text-file-status" role="status" aria-live="polite"></p>
         </div>
       </div>
     </div>
@@ -370,5 +374,6 @@
 <script src="apps/browser/browser.js"></script>
 <script src="apps/calculator/calculator.js"></script>
 <script src="apps/app_store/app_store.js"></script>
+<script src="apps/files/files.js"></script>
 
 </html>
