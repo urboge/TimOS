@@ -7,9 +7,48 @@
 
 #files-window #files-window-content {
   display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
   min-height: 0;
   overflow: hidden;
   padding: 12px 16px 16px;
+}
+
+#files-window #file-explorer-view,
+#files-window #text-file-editor {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  cursor: default;
+}
+
+#files-window .file-explorer-toolbar,
+#files-window .file-editor-toolbar {
+  width: auto;
+  height: auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  cursor: default;
+}
+
+#files-window #files-list {
+  width: auto;
+  height: auto;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  cursor: default;
+}
+
+#files-window #files-status,
+#files-window #text-file-status,
+#files-window .files-empty-state {
+  width: auto;
+  text-align: left;
+  margin: 0;
 }
 
 #file-explorer-view,
